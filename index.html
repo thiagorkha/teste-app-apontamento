@@ -496,6 +496,12 @@
             saveState();
         }
     });
+
+    window.addEventListener('pagehide', () => {
+        if (appData.startTime) {
+            saveState();
+        }
+    });
 </script>
 
 <script>
