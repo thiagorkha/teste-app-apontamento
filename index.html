@@ -2,19 +2,21 @@
 <html lang="pt-BR">
 <head>
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#000000">
+    <meta name="theme-color" content="#1D4ED8"> <!-- Cor primária nova -->
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Produção</title>
+    <title>Registro de Produção | Foco</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        /* Cores atualizadas para um visual mais moderno e profissional */
         :root {
-            --primary: #3b82f6;
-            --secondary: #10b981;
-            --background: #f3f4f6;
-            --card: #ffffff;
-            --text-color: #1f2937;
+            --primary: #1D4ED8; /* Azul Escuro */
+            --secondary: #059669; /* Verde Industrial */
+            --background: #f7f9fc; /* Fundo muito claro */
+            --card: #ffffff; /* Cartão branco */
+            --text-color: #1f2937; /* Texto escuro */
+            --border-color: #e5e7eb;
         }
         body {
             font-family: 'Inter', sans-serif;
@@ -31,66 +33,75 @@
         .card {
             background-color: var(--card);
             padding: 2rem;
-            border-radius: 1rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border-radius: 1.25rem; /* Mais arredondado */
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05); /* Sombra mais profunda */
+            border: 1px solid var(--border-color); /* Borda sutil */
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
         }
         .input-field {
             width: 100%;
             padding: 0.75rem;
-            border: 1px solid #d1d5db;
-            border-radius: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem; /* Mais arredondado */
             transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
             margin-top: 0.5rem;
+            background-color: #f9fafb; /* Fundo levemente cinza */
         }
         .input-field:focus {
             border-color: var(--primary);
             outline: none;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+            box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.2);
+            background-color: var(--card);
+        }
+        .btn-base {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: background-color 0.2s, transform 0.1s;
+            width: 100%;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .btn-base:active {
+            transform: translateY(1px);
         }
         .btn-primary {
             background-color: var(--primary);
             color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            transition: background-color 0.2s;
-            width: 100%;
         }
         .btn-primary:hover {
-            background-color: #2563eb;
+            background-color: #1E40AF;
         }
         .btn-secondary {
             background-color: var(--secondary);
             color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            transition: background-color 0.2s;
-            width: 100%;
         }
         .btn-secondary:hover {
-            background-color: #059669;
+            background-color: #047857;
         }
-        .summary-item strong {
-            display: block;
-            font-size: 0.875rem;
-            color: #6b7280;
-            margin-bottom: 0.25rem;
+        .summary-info-block {
+            background-color: #f3f4f6; /* Fundo cinza suave */
+            padding: 1rem;
+            border-radius: 0.75rem;
+            border-left: 4px solid var(--primary);
         }
-        .summary-item span {
-            font-size: 1rem;
-            font-weight: 500;
-            color: var(--text-color);
+        .timer-display-area {
+            background-color: var(--text-color); /* Fundo escuro para contraste */
+            color: #10B981; /* Verde neon para o timer */
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            font-size: 2.5rem; /* Maior */
+            letter-spacing: 2px;
+            font-family: monospace;
         }
-        /* Added styles for restore banner */
+        /* Style for restore banner */
         .restore-banner {
-            background-color: #fef3c7;
+            background-color: #fffbeb;
             border: 2px solid #f59e0b;
             padding: 1rem;
-            border-radius: 0.5rem;
-            margin-bottom: 1rem;
+            border-radius: 0.75rem;
+            margin-bottom: 1.5rem;
         }
     </style>
 </head>
@@ -98,35 +109,45 @@
 
 <div class="container-app">
     <div class="card">
-        <h1 id="app-title" class="text-2xl font-bold mb-6 text-center text-gray-800">Registro de Produção</h1>
+        <h1 id="app-title" class="text-3xl font-extrabold mb-8 text-center text-gray-900 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-7 h-7 mr-2 text-primary">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
+            Foco Produção
+        </h1>
 
-        <!-- Added restore banner -->
+        <!-- Banner de Restauração -->
         <div id="restore-banner" class="restore-banner hidden">
-            <p class="text-sm font-semibold text-amber-800 mb-2">⚠️ Sessão anterior encontrada!</p>
-            <p class="text-xs text-amber-700 mb-3">Você tem uma produção em andamento. Deseja continuar?</p>
-            <div class="flex gap-2">
+            <p class="text-sm font-bold text-amber-800 mb-2 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 mr-1 text-amber-600">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.021 3.375 1.767 3.375h14.468c1.745 0 2.632-1.875 1.767-3.375L13.5 7.5c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+                </svg>
+                Sessão em Andamento
+            </p>
+            <p class="text-xs text-amber-700 mb-4">Continuar a produção anterior ou iniciar um novo registro?</p>
+            <div class="flex gap-3">
                 <button onclick="restoreSession()" class="btn-secondary text-sm py-2">Continuar</button>
-                <button onclick="discardSession()" class="btn-primary text-sm py-2 opacity-75">Descartar</button>
+                <button onclick="discardSession()" class="btn-primary text-sm py-2 opacity-80 bg-red-600 hover:bg-red-700">Descartar</button>
             </div>
         </div>
 
-        <div id="message-box" class="hidden p-3 mb-4 rounded-lg text-center" role="alert"></div>
+        <div id="message-box" class="hidden p-3 mb-4 rounded-xl text-center text-sm font-medium border" role="alert"></div>
 
         <!-- Passo 1: Informações Básicas -->
         <div id="step-1" class="step">
-            <h2 class="text-xl font-semibold mb-4 text-center">Início do Turno</h2>
+            <h2 class="text-xl font-semibold mb-6 text-center text-gray-700">Identificação</h2>
             
-            <div class="mb-4">
+            <div class="mb-5">
                 <label for="operador" class="block text-sm font-medium text-gray-700">Nome do Operador</label>
                 <input type="text" id="operador" class="input-field" placeholder="Ex: João Silva" required>
-                <!-- NOVO: Opção para salvar o nome do operador -->
+                <!-- Opção para salvar o nome do operador -->
                 <div class="flex items-center mt-2">
-                    <input id="saveOperador" type="checkbox" class="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
-                    <label for="saveOperador" class="ml-2 block text-sm text-gray-700">Lembrar Operador</label>
+                    <input id="saveOperador" type="checkbox" class="h-4 w-4 text-primary rounded border-gray-300 focus:ring-primary">
+                    <label for="saveOperador" class="ml-2 block text-sm text-gray-600">Lembrar Operador</label>
                 </div>
             </div>
 
-            <div class="mb-6">
+            <div class="mb-8">
                 <label for="maquina" class="block text-sm font-medium text-gray-700">Máquina / Linha</label>
                 <select id="maquina" class="input-field">
                     <option value="">Selecione...</option>
@@ -137,75 +158,106 @@
                     <option>Torno Mascote</option>
                     <option>Fresadora Ferramenteira</option>
                 </select>
-                <!-- NOVO: Opção para salvar a máquina -->
+                <!-- Opção para salvar a máquina -->
                 <div class="flex items-center mt-2">
-                    <input id="saveMaquina" type="checkbox" class="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
-                    <label for="saveMaquina" class="ml-2 block text-sm text-gray-700">Lembrar Máquina</label>
+                    <input id="saveMaquina" type="checkbox" class="h-4 w-4 text-primary rounded border-gray-300 focus:ring-primary">
+                    <label for="saveMaquina" class="ml-2 block text-sm text-gray-600">Lembrar Máquina</label>
                 </div>
             </div>
 
-            <button onclick="nextStep(1)" class="btn-primary">Próximo</button>
+            <button onclick="nextStep(1)" class="btn-base btn-primary">Prosseguir</button>
         </div>
 
         <!-- Passo 2: Informações da Ordem de Produção -->
         <div id="step-2" class="step hidden">
-            <h2 class="text-xl font-semibold mb-4 text-center">Ordem de Produção</h2>
-            <div class="mb-4">
+            <h2 class="text-xl font-semibold mb-6 text-center text-gray-700">Detalhes da Produção</h2>
+            <div class="mb-5">
                 <label for="op" class="block text-sm font-medium text-gray-700">Ordem de Produção (OP)</label>
                 <input type="text" id="op" class="input-field" placeholder="Ex: 2024-12345" required>
             </div>
-            <div class="mb-6">
+            <div class="mb-8">
                 <label for="cp" class="block text-sm font-medium text-gray-700">Código do Produto (CP)</label>
                 <input type="text" id="cp" class="input-field" placeholder="Ex: PROD-A01" required>
             </div>
-            <button onclick="startProduction()" class="btn-secondary">Iniciar Produção</button>
-            <button onclick="prevStep(2)" class="btn-primary mt-3 opacity-75">Voltar</button>
+            <button onclick="startProduction()" class="btn-base btn-secondary">
+                <div class="flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5 mr-2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.985V5.653Z" />
+                    </svg>
+                    Iniciar Cronômetro
+                </div>
+            </button>
+            <button onclick="prevStep(2)" class="btn-base btn-primary mt-3 opacity-75 bg-gray-400 hover:bg-gray-500">Voltar</button>
         </div>
 
         <!-- Passo 3: Cronômetro de Produção -->
         <div id="step-3" class="step hidden">
-            <h2 class="text-xl font-semibold mb-6 text-center">Tempo em Produção</h2>
+            <h2 class="text-xl font-semibold mb-6 text-center text-gray-700">Produção em Curso</h2>
             
-            <!-- NOVO: Resumo de informações acima do cronômetro -->
-            <div id="step-3-summary" class="text-sm mb-6 p-4 bg-white border border-gray-200 rounded-lg space-y-1">
-                <p class="text-gray-700"><strong class="font-bold text-gray-800">Operador:</strong> <span id="info-operador">N/A</span></p>
-                <p class="text-gray-700"><strong class="font-bold text-gray-800">Máquina:</strong> <span id="info-maquina">N/A</span></p>
-                <p class="text-gray-700"><strong class="font-bold text-gray-800">OP/CP:</strong> <span id="info-op-cp">N/A / N/A</span></p>
+            <!-- Resumo de informações acima do cronômetro (Design melhorado) -->
+            <div id="step-3-summary" class="summary-info-block mb-6 grid grid-cols-2 gap-3 text-sm">
+                <div>
+                    <strong class="text-gray-500 font-medium">Operador</strong>
+                    <span id="info-operador" class="block font-semibold text-gray-800">N/A</span>
+                </div>
+                <div>
+                    <strong class="text-gray-500 font-medium">Máquina</strong>
+                    <span id="info-maquina" class="block font-semibold text-gray-800">N/A</span>
+                </div>
+                <div class="col-span-2">
+                    <strong class="text-gray-500 font-medium">OP / Produto</strong>
+                    <span id="info-op-cp" class="block font-semibold text-gray-800">N/A / N/A</span>
+                </div>
             </div>
 
-            <div class="text-center mb-8 p-6 bg-gray-100 rounded-lg">
-                <p class="text-5xl font-mono font-bold text-gray-800" id="timer-display">00:00:00</p>
-                <p class="text-sm text-gray-500 mt-2">Contando...</p>
+            <div class="text-center mb-8 timer-display-area">
+                <p class="font-bold" id="timer-display">00:00:00</p>
+                <p class="text-xs text-gray-400 mt-2 tracking-normal">Tempo Decorrido</p>
             </div>
-            <button onclick="finishProduction()" class="btn-primary">Finalizar Produção</button>
+            <button onclick="finishProduction()" class="btn-base btn-primary bg-red-600 hover:bg-red-700">
+                <div class="flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5 mr-2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                    Finalizar e Registrar
+                </div>
+            </button>
         </div>
 
         <!-- Passo 4: Resumo e Dados Finais -->
         <div id="step-4" class="step hidden">
-            <h2 class="text-xl font-semibold mb-4 text-center">Resumo Final</h2>
+            <h2 class="text-xl font-semibold mb-6 text-center text-gray-700">Dados Finais</h2>
 
-            <div class="space-y-4 p-4 mb-6 border border-gray-200 rounded-lg bg-gray-50">
-                <div class="summary-item"><strong>Tempo Total de Produção</strong><span id="summary-duration">00:00:00</span></div>
-                <div class="summary-item"><strong>Operador</strong><span id="summary-operador">N/A</span></div>
-                <div class="summary-item"><strong>OP / CP</strong><span id="summary-op-cp">N/A / N/A</span></div>
-                <div class="summary-item"><strong>Início</strong><span id="summary-start-time">N/A</span></div>
-                <div class="summary-item"><strong>Fim</strong><span id="summary-end-time">N/A</span></div>
+            <div class="space-y-3 p-4 mb-6 border border-gray-200 rounded-lg bg-gray-50 text-sm">
+                <div class="flex justify-between">
+                    <strong class="text-gray-500">Duração Total:</strong><span id="summary-duration" class="font-semibold text-secondary">00:00:00</span>
+                </div>
+                <div class="flex justify-between">
+                    <strong class="text-gray-500">Operador:</strong><span id="summary-operador" class="font-medium">N/A</span>
+                </div>
+                <div class="flex justify-between">
+                    <strong class="text-gray-500">OP / CP:</strong><span id="summary-op-cp" class="font-medium">N/A / N/A</span>
+                </div>
+                <div class="flex justify-between">
+                    <strong class="text-gray-500">Início / Fim:</strong>
+                    <span id="summary-start-end-time" class="font-medium text-right">N/A</span>
+                </div>
             </div>
 
-            <div class="mb-4">
+            <div class="mb-5">
                 <label for="quantidade" class="block text-sm font-medium text-gray-700">Quantidade Produzida</label>
                 <input type="number" id="quantidade" class="input-field" placeholder="0" min="0" required>
             </div>
-            <div class="mb-6">
+            <div class="mb-5">
+                <label for="setupTime" class="block text-sm font-medium text-gray-700">Tempo de Setup (minutos)</label>
+                <input type="number" id="setupTime" min="0" class="input-field" placeholder="Ex.: 12">
+            </div>
+            <div class="mb-8">
                 <label for="observacao" class="block text-sm font-medium text-gray-700">Observação (Opcional)</label>
                 <textarea id="observacao" class="input-field" rows="3" placeholder="Qualquer problema ou nota relevante."></textarea>
             </div>
-            <div>
-                <label for="setupTime" class="block font-medium mb-1">Tempo de Setup (minutos)</label>
-                <input type="number" id="setupTime" min="0" class="input-field" placeholder="Ex.: 12">
-            </div>
 
-            <button onclick="saveFinalData(this)" class="btn-secondary">Salvar Dados Finais</button>
+            <button onclick="saveFinalData(this)" class="btn-base btn-secondary">Salvar Dados Finais</button>
         </div>
 
         <!-- Passo 5: Confirmação de Salvamento -->
@@ -214,9 +266,9 @@
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-16 h-16 mx-auto text-secondary mb-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                 </svg>
-                <h2 class="text-xl font-semibold mb-2">Dados Salvos com Sucesso!</h2>
-                <p class="text-gray-600 mb-6">O registro de produção foi concluído e salvo na planilha.</p>
-                <button onclick="resetApp()" class="btn-primary">Iniciar Novo Registro</button>
+                <h2 class="text-2xl font-bold mb-2 text-gray-800">Concluído!</h2>
+                <p class="text-gray-600 mb-8">O registro foi salvo com sucesso. Seu foco fez a diferença.</p>
+                <button onclick="resetApp()" class="btn-base btn-primary">Iniciar Novo Registro</button>
             </div>
         </div>
 
@@ -239,7 +291,6 @@
         observation: '',
         setupTime: '',
         currentStep: 1, // Track current step
-        // Novas chaves para as preferências de salvamento
         prefSaveOperador: false,
         prefSaveMaquina: false,
     };
@@ -247,7 +298,7 @@
     let timerInterval = null;
     let saveStateInterval = null; // Auto-save interval
     const TIMER_DISPLAY = document.getElementById('timer-display');
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxQXPruL9fpi7bsbLcOmZsaqanwMgWbWzqnp64v_kmJ7xI3FJznelkHuVK3w1ZjWr8M/exec';
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxQXPruL9fpi7bsbLcOmZsaqanwMgWbWzqnp64v_kmJ7xI3FJznelkHuVK3w1ZjWr8M/exec'; // URL do Google Apps Script
 
     function formatDateTime(date) {
         if (!date) return 'N/A';
@@ -266,9 +317,10 @@
     function showMessage(text, isError = false) {
         const box = document.getElementById('message-box');
         box.textContent = text;
-        box.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'bg-green-100', 'text-green-700');
+        box.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'border-red-400', 'bg-green-100', 'text-green-700', 'border-green-400');
         box.classList.add(isError ? 'bg-red-100' : 'bg-green-100');
         box.classList.add(isError ? 'text-red-700' : 'text-green-700');
+        box.classList.add(isError ? 'border-red-400' : 'border-green-400');
         setTimeout(() => box.classList.add('hidden'), 5000);
     }
 
@@ -281,6 +333,7 @@
             endTime: appData.endTime ? appData.endTime.getTime() : null,
         };
         
+        // Função do db.js para salvar o estado
         await saveCurrentState(stateToSave);
         console.log('[v0] State auto-saved');
     }
@@ -289,18 +342,18 @@
         const state = await getCurrentState();
         if (!state) return;
 
+        // Atribui as propriedades salvas
         Object.assign(appData, {
             ...state,
             startTime: state.startTime ? new Date(state.startTime) : null,
             endTime: state.endTime ? new Date(state.endTime) : null,
         });
 
-        // Restore form fields
+        // Restaura campos
         document.getElementById('operador').value = appData.operador;
         document.getElementById('maquina').value = appData.maquina;
         document.getElementById('op').value = appData.op;
         document.getElementById('cp').value = appData.cp;
-        // Restaurar checkboxes de preferência (se existirem no estado)
         document.getElementById('saveOperador').checked = appData.prefSaveOperador || false;
         document.getElementById('saveMaquina').checked = appData.prefSaveMaquina || false;
 
@@ -308,20 +361,28 @@
         document.getElementById('restore-banner').classList.add('hidden');
 
         if (appData.currentStep === 3 && appData.startTime) {
-            // Recalculate elapsed time
+            // Recalcula tempo decorrido
             const now = new Date();
             const elapsed = Math.floor((now - appData.startTime) / 1000);
             appData.durationSeconds = elapsed;
             
             goToStep(3);
             
-            // Restart timer
+            // Reinicia o cronômetro
             if (timerInterval) clearInterval(timerInterval);
             timerInterval = setInterval(updateTimer, 1000);
             updateTimer();
             
             showMessage('Sessão restaurada! Continuando produção...', false);
         } else {
+            // Se o passo for 4, mostra o resumo
+            if (appData.currentStep === 4) {
+                 // Atualiza os resumos da tela 4 com os dados restaurados
+                document.getElementById('summary-duration').textContent = formatDuration(appData.durationSeconds);
+                document.getElementById('summary-operador').textContent = appData.operador;
+                document.getElementById('summary-op-cp').textContent = `${appData.op} / ${appData.cp}`;
+                document.getElementById('summary-start-end-time').textContent = `${formatDateTime(appData.startTime)} - ${formatDateTime(appData.endTime)}`;
+            }
             goToStep(appData.currentStep);
         }
     }
@@ -329,7 +390,7 @@
     async function discardSession() {
         await clearCurrentState();
         document.getElementById('restore-banner').classList.add('hidden');
-        goToStep(1);
+        resetApp(false); // Reseta tudo, mas não as preferências salvas
     }
 
     function goToStep(stepNumber) {
@@ -344,7 +405,7 @@
         
         if (stepNumber >= 3) saveState();
         
-        // NOVO: Atualizar informações do Passo 3 ao mudar para ele
+        // Atualizar informações do Passo 3 ao mudar para ele
         if (stepNumber === 3) {
             document.getElementById('info-operador').textContent = appData.operador;
             document.getElementById('info-maquina').textContent = appData.maquina;
@@ -412,11 +473,11 @@
         timerInterval = setInterval(updateTimer, 1000);
 
         if (saveStateInterval) clearInterval(saveStateInterval);
-        saveStateInterval = setInterval(saveState, 10000);
+        saveStateInterval = setInterval(saveState, 10000); // Salva a cada 10 segundos
 
         goToStep(3);
-        await saveState(); // Save immediately
-        showMessage(`Produção (OP: ${op}) iniciada às ${formatDateTime(appData.startTime)}`, false);
+        await saveState(); // Salva imediatamente
+        showMessage(`Produção (OP: ${op}) iniciada`, false);
     }
 
     function updateTimer() {
@@ -430,23 +491,23 @@
 
     async function finishProduction() {
         if (timerInterval) clearInterval(timerInterval);
-        if (saveStateInterval) clearInterval(saveStateInterval); // Stop auto-save
+        if (saveStateInterval) clearInterval(saveStateInterval); 
         
         appData.endTime = new Date();
 
         if (appData.durationSeconds === 0) {
             showMessage("O tempo de produção precisa ser maior que 0 segundos.", true);
+            // Poderia voltar para o Passo 2 ou recomeçar.
             return;
         }
 
         document.getElementById('summary-duration').textContent = formatDuration(appData.durationSeconds);
         document.getElementById('summary-operador').textContent = appData.operador;
         document.getElementById('summary-op-cp').textContent = `${appData.op} / ${appData.cp}`;
-        document.getElementById('summary-start-time').textContent = formatDateTime(appData.startTime);
-        document.getElementById('summary-end-time').textContent = formatDateTime(appData.endTime);
+        document.getElementById('summary-start-end-time').textContent = `${formatDateTime(appData.startTime)} - ${formatDateTime(appData.endTime)}`;
 
         goToStep(4);
-        await saveState(); // Save final state
+        await saveState(); // Salva o estado final
     }
 
     async function saveFinalData(saveButton) {
@@ -461,7 +522,7 @@
 
         appData.quantity = parseInt(quantidade);
         appData.observation = observacao;
-        appData.setupTime = parseInt(setupTime);
+        appData.setupTime = parseInt(setupTime) || 0; // Se vazio, é 0
 
         if (SCRIPT_URL.includes('VOU_COLOCAR_AQUI_O_URL') || !SCRIPT_URL.startsWith('https://')) {
             showMessage("ERRO: Por favor, configure a URL do Google Apps Script (variável SCRIPT_URL) para o URL 'exec' do seu deployment.", true);
@@ -482,14 +543,17 @@
         };
 
         const btn = saveButton || document.querySelector('button[onclick*="saveFinalData"]');
-        if (btn) { btn.disabled = true; btn.textContent = 'Salvando...'; }
+        if (btn) { btn.disabled = true; btn.textContent = 'Enviando...'; }
 
         try {
-            await fetch(SCRIPT_URL, {
+            // Usa o fetch com 'no-cors' para envio simples de formulários via Apps Script
+            const response = await fetch(SCRIPT_URL, {
                 method: 'POST',
-                mode: 'no-cors',
+                mode: 'no-cors', 
                 body: JSON.stringify(dataToSend)
             });
+
+            // Como usamos 'no-cors', a resposta real não pode ser lida, mas assumimos sucesso se não houver erro de rede.
 
             showMessage("Dados enviados com sucesso! Verifique a planilha.", false);
             
@@ -499,7 +563,7 @@
 
         } catch (error) {
             console.error('Erro ao enviar dados:', error);
-            showMessage("Erro ao salvar dados. Veja console para mais detalhes.", true);
+            showMessage("Erro ao salvar dados. Verifique a conexão ou a URL do Apps Script.", true);
             if (btn) { btn.disabled = false; btn.textContent = 'Salvar Dados Finais'; }
             return;
         } finally {
@@ -507,24 +571,22 @@
         }
     }
 
+    // O parâmetro keepPrefs é opcional e false por default, mas é mais limpo carregar as preferências novamente
     async function resetApp() {
-        // As preferências de salvamento (prefSaveOperador/Maquina) não são resetadas aqui, apenas o estado da produção.
-        Object.keys(appData).forEach(key => {
-             if (key === 'startTime' || key === 'endTime') {
-                 appData[key] = null;
-             } else if (key === 'durationSeconds' || key === 'quantity' || key === 'setupTime') {
-                 appData[key] = 0;
-             } else if (key === 'operador' && !appData.prefSaveOperador) {
-                 appData[key] = '';
-             } else if (key === 'maquina' && !appData.prefSaveMaquina) {
-                 appData[key] = '';
-             } else if (key === 'op' || key === 'cp' || key === 'observation') {
-                 appData[key] = '';
-             }
-        });
+        // Limpar apenas os dados de sessão
+        appData.startTime = null;
+        appData.endTime = null;
+        appData.durationSeconds = 0;
+        appData.quantity = 0;
+        appData.observation = '';
+        appData.setupTime = '';
+        if (!appData.prefSaveOperador) appData.operador = '';
+        if (!appData.prefSaveMaquina) appData.maquina = '';
+        appData.op = '';
+        appData.cp = '';
         appData.currentStep = 1;
 
-        // Limpar inputs
+        // Limpar inputs da UI
         if (!appData.prefSaveOperador) document.getElementById('operador').value = '';
         if (!appData.prefSaveMaquina) document.getElementById('maquina').value = '';
         document.getElementById('op').value = '';
@@ -535,9 +597,13 @@
         TIMER_DISPLAY.textContent = '00:00:00';
 
         if (timerInterval) clearInterval(timerInterval);
-        if (saveStateInterval) clearInterval(saveStateInterval); // 
+        if (saveStateInterval) clearInterval(saveStateInterval); 
 
-        await clearCurrentState(); // Clear saved state
+        await clearCurrentState(); // Limpa o estado salvo no IndexedDB/localStorage
+        
+        // Recarrega as preferências para preencher campos se o "Lembrar" estiver ativo
+        loadPreferences(); 
+        
         goToStep(1);
     }
     
@@ -581,15 +647,17 @@
 
 
     document.addEventListener('DOMContentLoaded', async () => {
-        // Carrega as preferências de salvamento antes de qualquer outra coisa
+        // 1. Carrega as preferências de salvamento
         loadPreferences();
         
+        // 2. Tenta restaurar a sessão
         const savedState = await getCurrentState();
         
         if (savedState && savedState.startTime && savedState.currentStep >= 3) {
-            // Show restore banner
+            // Se houver estado válido, mostra o banner de restauração
             document.getElementById('restore-banner').classList.remove('hidden');
         } else {
+            // Se não houver estado, inicia no passo 1
             goToStep(1);
         }
     });
