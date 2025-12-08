@@ -115,10 +115,17 @@
         <!-- Passo 1: Informações Básicas -->
         <div id="step-1" class="step">
             <h2 class="text-xl font-semibold mb-4 text-center">Início do Turno</h2>
+            
             <div class="mb-4">
                 <label for="operador" class="block text-sm font-medium text-gray-700">Nome do Operador</label>
                 <input type="text" id="operador" class="input-field" placeholder="Ex: João Silva" required>
+                <!-- NOVO: Opção para salvar o nome do operador -->
+                <div class="flex items-center mt-2">
+                    <input id="saveOperador" type="checkbox" class="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                    <label for="saveOperador" class="ml-2 block text-sm text-gray-700">Lembrar Operador</label>
+                </div>
             </div>
+
             <div class="mb-6">
                 <label for="maquina" class="block text-sm font-medium text-gray-700">Máquina / Linha</label>
                 <select id="maquina" class="input-field">
@@ -130,7 +137,13 @@
                     <option>Torno Mascote</option>
                     <option>Fresadora Ferramenteira</option>
                 </select>
+                <!-- NOVO: Opção para salvar a máquina -->
+                <div class="flex items-center mt-2">
+                    <input id="saveMaquina" type="checkbox" class="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                    <label for="saveMaquina" class="ml-2 block text-sm text-gray-700">Lembrar Máquina</label>
+                </div>
             </div>
+
             <button onclick="nextStep(1)" class="btn-primary">Próximo</button>
         </div>
 
@@ -152,6 +165,14 @@
         <!-- Passo 3: Cronômetro de Produção -->
         <div id="step-3" class="step hidden">
             <h2 class="text-xl font-semibold mb-6 text-center">Tempo em Produção</h2>
+            
+            <!-- NOVO: Resumo de informações acima do cronômetro -->
+            <div id="step-3-summary" class="text-sm mb-6 p-4 bg-white border border-gray-200 rounded-lg space-y-1">
+                <p class="text-gray-700"><strong class="font-bold text-gray-800">Operador:</strong> <span id="info-operador">N/A</span></p>
+                <p class="text-gray-700"><strong class="font-bold text-gray-800">Máquina:</strong> <span id="info-maquina">N/A</span></p>
+                <p class="text-gray-700"><strong class="font-bold text-gray-800">OP/CP:</strong> <span id="info-op-cp">N/A / N/A</span></p>
+            </div>
+
             <div class="text-center mb-8 p-6 bg-gray-100 rounded-lg">
                 <p class="text-5xl font-mono font-bold text-gray-800" id="timer-display">00:00:00</p>
                 <p class="text-sm text-gray-500 mt-2">Contando...</p>
@@ -218,12 +239,14 @@
         observation: '',
         setupTime: '',
         currentStep: 1, // Track current step
+        // Novas chaves para as preferências de salvamento
+        prefSaveOperador: false,
+        prefSaveMaquina: false,
     };
 
     let timerInterval = null;
     let saveStateInterval = null; // Auto-save interval
     const TIMER_DISPLAY = document.getElementById('timer-display');
-
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxQXPruL9fpi7bsbLcOmZsaqanwMgWbWzqnp64v_kmJ7xI3FJznelkHuVK3w1ZjWr8M/exec';
 
     function formatDateTime(date) {
@@ -277,6 +300,10 @@
         document.getElementById('maquina').value = appData.maquina;
         document.getElementById('op').value = appData.op;
         document.getElementById('cp').value = appData.cp;
+        // Restaurar checkboxes de preferência (se existirem no estado)
+        document.getElementById('saveOperador').checked = appData.prefSaveOperador || false;
+        document.getElementById('saveMaquina').checked = appData.prefSaveMaquina || false;
+
 
         document.getElementById('restore-banner').classList.add('hidden');
 
@@ -316,12 +343,21 @@
         if (targetEl) targetEl.classList.remove('hidden');
         
         if (stepNumber >= 3) saveState();
+        
+        // NOVO: Atualizar informações do Passo 3 ao mudar para ele
+        if (stepNumber === 3) {
+            document.getElementById('info-operador').textContent = appData.operador;
+            document.getElementById('info-maquina').textContent = appData.maquina;
+            document.getElementById('info-op-cp').textContent = `${appData.op} / ${appData.cp}`;
+        }
     }
 
     function nextStep(currentStep) {
         if (currentStep === 1) {
             const operador = document.getElementById('operador').value.trim();
             const maquina = document.getElementById('maquina').value.trim();
+            const saveOperador = document.getElementById('saveOperador').checked;
+            const saveMaquina = document.getElementById('saveMaquina').checked;
 
             if (!operador || !maquina) {
                 showMessage("Por favor, preencha o Nome do Operador e a Máquina.", true);
@@ -330,6 +366,24 @@
 
             appData.operador = operador;
             appData.maquina = maquina;
+            appData.prefSaveOperador = saveOperador;
+            appData.prefSaveMaquina = saveMaquina;
+            
+            // Lógica de Salvar Preferências no localStorage
+            if (saveOperador) {
+                localStorage.setItem('savedOperador', operador);
+            } else {
+                localStorage.removeItem('savedOperador');
+            }
+            localStorage.setItem('prefSaveOperador', saveOperador ? 'true' : 'false');
+
+            if (saveMaquina) {
+                localStorage.setItem('savedMaquina', maquina);
+            } else {
+                localStorage.removeItem('savedMaquina');
+            }
+            localStorage.setItem('prefSaveMaquina', saveMaquina ? 'true' : 'false');
+            
             goToStep(2);
         } else {
             goToStep(currentStep + 1);
@@ -454,11 +508,25 @@
     }
 
     async function resetApp() {
-        Object.keys(appData).forEach(key => appData[key] = (key === 'startTime' || key === 'endTime') ? null : (key === 'durationSeconds' || key === 'quantity' ? 0 : ''));
+        // As preferências de salvamento (prefSaveOperador/Maquina) não são resetadas aqui, apenas o estado da produção.
+        Object.keys(appData).forEach(key => {
+             if (key === 'startTime' || key === 'endTime') {
+                 appData[key] = null;
+             } else if (key === 'durationSeconds' || key === 'quantity' || key === 'setupTime') {
+                 appData[key] = 0;
+             } else if (key === 'operador' && !appData.prefSaveOperador) {
+                 appData[key] = '';
+             } else if (key === 'maquina' && !appData.prefSaveMaquina) {
+                 appData[key] = '';
+             } else if (key === 'op' || key === 'cp' || key === 'observation') {
+                 appData[key] = '';
+             }
+        });
         appData.currentStep = 1;
 
-        document.getElementById('operador').value = '';
-        document.getElementById('maquina').value = '';
+        // Limpar inputs
+        if (!appData.prefSaveOperador) document.getElementById('operador').value = '';
+        if (!appData.prefSaveMaquina) document.getElementById('maquina').value = '';
         document.getElementById('op').value = '';
         document.getElementById('cp').value = '';
         document.getElementById('quantidade').value = '';
@@ -472,8 +540,50 @@
         await clearCurrentState(); // Clear saved state
         goToStep(1);
     }
+    
+    // Função para carregar preferências e preencher campos
+    function loadPreferences() {
+        const operadorInput = document.getElementById('operador');
+        const maquinaSelect = document.getElementById('maquina');
+        const saveOperadorCheckbox = document.getElementById('saveOperador');
+        const saveMaquinaCheckbox = document.getElementById('saveMaquina');
+
+        // Preferência Operador
+        const prefOperador = localStorage.getItem('prefSaveOperador');
+        if (prefOperador === 'true') {
+            const savedOperador = localStorage.getItem('savedOperador');
+            if (savedOperador) {
+                operadorInput.value = savedOperador;
+                appData.operador = savedOperador;
+            }
+            saveOperadorCheckbox.checked = true;
+            appData.prefSaveOperador = true;
+        } else {
+            saveOperadorCheckbox.checked = false;
+            appData.prefSaveOperador = false;
+        }
+
+        // Preferência Máquina
+        const prefMaquina = localStorage.getItem('prefSaveMaquina');
+        if (prefMaquina === 'true') {
+            const savedMaquina = localStorage.getItem('savedMaquina');
+            if (savedMaquina) {
+                maquinaSelect.value = savedMaquina;
+                appData.maquina = savedMaquina;
+            }
+            saveMaquinaCheckbox.checked = true;
+            appData.prefSaveMaquina = true;
+        } else {
+            saveMaquinaCheckbox.checked = false;
+            appData.prefSaveMaquina = false;
+        }
+    }
+
 
     document.addEventListener('DOMContentLoaded', async () => {
+        // Carrega as preferências de salvamento antes de qualquer outra coisa
+        loadPreferences();
+        
         const savedState = await getCurrentState();
         
         if (savedState && savedState.startTime && savedState.currentStep >= 3) {
