@@ -181,7 +181,7 @@
             </div>
             
             <div class="flex space-x-3 mb-3">
-                <!-- Botão para iniciar o Setup -->
+                <!-- NOVO Botão para iniciar o Setup -->
                 <button onclick="startSetup()" class="btn-base btn-secondary flex-1">
                     <div class="flex items-center justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5 mr-1">
@@ -264,7 +264,7 @@
                 </div>
                 <!-- Exibição do Tempo de Setup (NOVO) -->
                 <div class="flex justify-between">
-                    <strong class="text-gray-500">Duração Setup:</strong><span id="summary-setup-time" class="font-semibold text-primary">0 min</span>
+                    <strong class="text-gray-500">Duração Setup:</strong><span id="summary-setup-time" class="font-semibold text-primary">00:00:00</span>
                 </div>
                 <div class="flex justify-between">
                     <strong class="text-gray-500">Operador:</strong><span id="summary-operador" class="font-medium">N/A</span>
@@ -282,6 +282,7 @@
                 <label for="quantidade" class="block text-sm font-medium text-gray-700">Quantidade Produzida</label>
                 <input type="number" id="quantidade" class="input-field" placeholder="0" min="0" required>
             </div>
+            <!-- Campo de Tempo de Setup (minutos) REMOVIDO, pois o cálculo é automático -->
             
             <div class="mb-8">
                 <label for="observacao" class="block text-sm font-medium text-gray-700">Observação (Opcional)</label>
@@ -318,13 +319,13 @@
         startTime: null,
         endTime: null,
         durationSeconds: 0,
-        // NEW: Added to control mode (Setup or Production)
+        // NOVO: Adicionado para controlar o modo (Setup ou Produção)
         isSetupMode: true, 
-        // NEW: Stores setup duration after completion (in seconds)
+        // NOVO: Armazena a duração do setup após finalizado (em segundos)
         setupDurationSeconds: 0, 
         quantity: 0,
         observation: '',
-        setupTime: 0, // setupTime in appData now stores duration in seconds
+        setupTime: 0, // setupTime no appData agora armazena a duração em segundos
         currentStep: 1, // Track current step
         prefSaveOperador: false,
         prefSaveMaquina: false,
@@ -333,9 +334,7 @@
     let timerInterval = null;
     let saveStateInterval = null; // Auto-save interval
     const TIMER_DISPLAY = document.getElementById('timer-display');
-    
-    // !!! IMPORTANTE !!! SUBSTITUA ESTA URL PELO SEU ENDEREÇO DO GOOGLE APPS SCRIPT (com o final /exec)
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxQXPruL9fpi7bsbLcOmZsaqanwMgWbWzqnp64v_kmj7xI3FJznelkHuVK3w1ZjWr8M/exec'; 
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxQXPruL9fpi7bsbLcOmZsaqanwMgWbWzqnp64v_kmJ7xI3FJznelkHuVK3w1ZjWr8M/exec'; // URL do Google Apps Script
 
     function formatDateTime(date) {
         if (!date) return 'N/A';
@@ -351,14 +350,8 @@
         return `${h}:${m}:${s}`;
     }
 
-    /**
-     * @description Converte segundos em minutos, arredondando para o número inteiro mais próximo.
-     * @param {number} seconds - Duração em segundos.
-     * @returns {string} Duração em minutos seguida de ' min'.
-     */
-    function formatToMinutes(seconds) {
-        const minutes = Math.round(seconds / 60);
-        return `${minutes} min`;
+    function formatDurationToHHMMSS(seconds) {
+        return formatDuration(seconds); // O formato já é HH:MM:SS
     }
 
     function showMessage(text, isError = false) {
@@ -372,7 +365,7 @@
     }
 
     async function saveState() {
-        // Check if there is a start time and if the step is 3 (Setup or Production)
+        // Verifica se há tempo de inicio e se o passo é o 3 (Setup ou Produção)
         if (!appData.startTime || appData.currentStep !== 3) return;
         
         const stateToSave = {
@@ -381,7 +374,7 @@
             endTime: appData.endTime ? appData.endTime.getTime() : null,
         };
         
-        // Function from db.js to save state
+        // Função do db.js para salvar o estado
         await saveCurrentState(stateToSave);
         console.log('[v0] State auto-saved');
     }
@@ -390,14 +383,14 @@
         const state = await getCurrentState();
         if (!state) return;
 
-        // Assign saved properties
+        // Atribui as propriedades salvas
         Object.assign(appData, {
             ...state,
             startTime: state.startTime ? new Date(state.startTime) : null,
             endTime: state.endTime ? new Date(state.endTime) : null,
         });
 
-        // Restore fields
+        // Restaura campos
         document.getElementById('operador').value = appData.operador;
         document.getElementById('maquina').value = appData.maquina;
         document.getElementById('op').value = appData.op;
@@ -409,26 +402,26 @@
         document.getElementById('restore-banner').classList.add('hidden');
 
         if (appData.currentStep === 3 && appData.startTime) {
-            // Recalculate elapsed time
+            // Recalcula tempo decorrido
             const now = new Date();
             const elapsed = Math.floor((now - appData.startTime) / 1000);
             appData.durationSeconds = elapsed;
             
             goToStep(3);
             
-            // Restart the timer
+            // Reinicia o cronômetro
             if (timerInterval) clearInterval(timerInterval);
             timerInterval = setInterval(updateTimer, 1000);
             updateTimer();
             
             showMessage('Sessão restaurada! Continuando...', false);
         } else {
-            // If step is 4, show summary
+            // Se o passo for 4, mostra o resumo
             if (appData.currentStep === 4) {
-                 // Update the summary in screen 4 with restored data
+                 // Atualiza os resumos da tela 4 com os dados restaurados
                 document.getElementById('summary-duration').textContent = formatDuration(appData.durationSeconds);
-                // Display setup time in minutes
-                document.getElementById('summary-setup-time').textContent = formatToMinutes(appData.setupDurationSeconds);
+                // Exibe setup time no formato HH:MM:SS
+                document.getElementById('summary-setup-time').textContent = formatDurationToHHMMSS(appData.setupDurationSeconds);
                 document.getElementById('summary-operador').textContent = appData.operador;
                 document.getElementById('summary-op-cp').textContent = `${appData.op} / ${appData.cp}`;
                 document.getElementById('summary-start-end-time').textContent = `${formatDateTime(appData.startTime)} - ${formatDateTime(appData.endTime)}`;
@@ -455,16 +448,16 @@
         
         if (stepNumber >= 3) saveState();
         
-        // Update information for Step 3 when changing to it
+        // Atualizar informações do Passo 3 ao mudar para ele
         if (stepNumber === 3) {
             document.getElementById('info-operador').textContent = appData.operador;
             document.getElementById('info-maquina').textContent = appData.maquina;
             document.getElementById('info-op-cp').textContent = `${appData.op} / ${appData.cp}`;
-            updateStep3UI(); // Update title and buttons
+            updateStep3UI(); // Atualiza título e botões
         }
     }
 
-    // Function to update Step 3 UI based on mode (Setup/Production)
+    // Função para atualizar a UI do Passo 3 com base no modo (Setup/Produção)
     function updateStep3UI() {
         const title = document.getElementById('step-3-title');
         const status = document.getElementById('timer-status');
@@ -501,7 +494,7 @@
             appData.prefSaveOperador = saveOperador;
             appData.prefSaveMaquina = saveMaquina;
             
-            // Logic to Save Preferences in localStorage
+            // Lógica de Salvar Preferências no localStorage
             if (saveOperador) {
                 localStorage.setItem('savedOperador', operador);
             } else {
@@ -537,40 +530,40 @@
 
         appData.op = op;
         appData.cp = cp;
-        appData.startTime = new Date(); // Start the timer
+        appData.startTime = new Date(); // Inicia o cronômetro
         appData.durationSeconds = 0;
-        appData.isSetupMode = modeIsSetup; // Define the mode
+        appData.isSetupMode = modeIsSetup; // Define o modo
 
         if (timerInterval) clearInterval(timerInterval);
         timerInterval = setInterval(updateTimer, 1000);
 
         if (saveStateInterval) clearInterval(saveStateInterval);
-        saveStateInterval = setInterval(saveState, 10000); // Save every 10 seconds
+        saveStateInterval = setInterval(saveState, 10000); // Salva a cada 10 segundos
 
         goToStep(3);
-        saveState(); // Save immediately
+        saveState(); // Salva imediatamente
         return true;
     }
 
-    // Function to start the timer in Setup mode (called by the Start Setup button)
+    // Função para iniciar o cronômetro no modo Setup (chamada pelo botão Iniciar Setup)
     async function startSetup() {
         if (initializeTimer(true)) {
-            // Zero the previous setup duration and set Setup mode
+            // Zera a duração do setup anterior e define modo Setup
             appData.setupDurationSeconds = 0; 
             showMessage(`Setup (OP: ${appData.op}) iniciado`, false);
         }
     }
 
-    // Function to start the timer directly in Production mode (called by the Start Production button)
+    // Função para iniciar o cronômetro diretamente no modo Produção (chamada pelo botão Iniciar Produção)
     async function startProduction() {
         if (initializeTimer(false)) {
-            // Zero setup duration and set Production mode
+            // Zera setup duration e define modo Produção
             appData.setupDurationSeconds = 0; 
             showMessage(`Produção (OP: ${appData.op}) iniciada diretamente`, false);
         }
     }
 
-    // Finish Setup and restart the timer for Production
+    // Finaliza o Setup e reinicia o cronômetro para Produção
     async function finishSetup() {
         if (!appData.startTime) {
             showMessage("Erro: O setup não foi iniciado corretamente.", true);
@@ -585,20 +578,20 @@
             return;
         }
 
-        // 1. Store the total setup time (in seconds)
+        // 1. Armazena o tempo de setup total
         appData.setupDurationSeconds = elapsedSetup;
         
-        // 2. Restart the timer for Production
+        // 2. Reinicia o cronômetro para a Produção
         appData.startTime = new Date(); 
-        appData.durationSeconds = 0; // Zero the duration counter for Production
-        appData.isSetupMode = false; // Change to Production mode
+        appData.durationSeconds = 0; // Zera o contador de duração para Produção
+        appData.isSetupMode = false; // Muda para o modo Produção
         
-        // 3. Update UI and save state
+        // 3. Atualiza UI e salva o estado
         updateStep3UI(); 
         updateTimer();
         await saveState(); 
         
-        showMessage(`Setup finalizado (${formatToMinutes(elapsedSetup)}). Produção iniciada!`, false);
+        showMessage(`Setup finalizado (${formatDurationToHHMMSS(elapsedSetup)}). Produção iniciada!`, false);
     }
 
     function updateTimer() {
@@ -626,19 +619,18 @@
             return;
         }
 
-        // Update the summary for Step 4
+        // Atualiza o resumo do Passo 4
         document.getElementById('summary-duration').textContent = formatDuration(appData.durationSeconds);
-        // Display setup time in minutes (round to nearest integer)
-        document.getElementById('summary-setup-time').textContent = formatToMinutes(appData.setupDurationSeconds); 
+        // Exibe tempo de setup no formato HH:MM:SS
+        document.getElementById('summary-setup-time').textContent = formatDurationToHHMMSS(appData.setupDurationSeconds); 
         document.getElementById('summary-operador').textContent = appData.operador;
         document.getElementById('summary-op-cp').textContent = `${appData.op} / ${appData.cp}`;
         document.getElementById('summary-start-end-time').textContent = `${formatDateTime(appData.startTime)} - ${formatDateTime(appData.endTime)}`;
 
-        // appData.setupTime já armazena o valor em segundos
         appData.setupTime = appData.setupDurationSeconds; 
 
         goToStep(4);
-        await saveState(); // Save final state
+        await saveState(); // Salva o estado final
     }
 
     async function saveFinalData(saveButton) {
@@ -653,15 +645,13 @@
         appData.quantity = parseInt(quantidade);
         appData.observation = observacao;
         
-        // CORREÇÃO: Validação de Erro do SCRIPT_URL
-        if (!SCRIPT_URL || !SCRIPT_URL.startsWith('https://') || SCRIPT_URL.includes('COLE_SUA_URL_AQUI')) {
-            showMessage("ERRO: Por favor, configure a URL do Google Apps Script (variável SCRIPT_URL) corretamente no código e certifique-se que começa com 'https://'.", true);
+        if (SCRIPT_URL.includes('AKfycbxQXPruL9fpi7bsbLcOmZsaqanwMgWbWzqnp64v_kmj7xI3FJznelkHuVK3w1ZjWr8M') || !SCRIPT_URL.startsWith('https://')) {
+            showMessage("ERRO: Por favor, configure a URL do Google Apps Script (variável SCRIPT_URL) para o URL 'exec' do seu deployment.", true);
             return;
         }
-        // FIM: Validação de Erro do SCRIPT_URL
 
-        // NOVO: Cálculo e formatação do tempo de setup em minutos (arredondado)
-        const setupMinutes = Math.round(appData.setupTime / 60);
+        // NOVO: Formato HH:MM:SS para o tempo de setup
+        const setupTimeHHMMSS = formatDurationToHHMMSS(appData.setupTime);
 
         const dataToSend = {
             Operador: appData.operador,
@@ -670,26 +660,25 @@
             CP: appData.cp,
             HoraInicio: formatDateTime(appData.startTime),
             HoraFim: formatDateTime(appData.endTime),
-            Duracao: formatDuration(appData.durationSeconds), // Manter HH:MM:SS para Produção
+            Duracao: formatDuration(appData.durationSeconds),
             Quantidade: appData.quantity,
             Observacao: appData.observation,
-            // NOVO CAMPO: Enviar tempo de setup em minutos (inteiro)
-            SetupMinutos: setupMinutes, 
+            // NOVO: Envia o tempo de setup no formato HH:MM:SS
+            SetupHHMMSS: setupTimeHHMMSS, 
         };
 
         const btn = saveButton || document.querySelector('button[onclick*="saveFinalData"]');
         if (btn) { btn.disabled = true; btn.textContent = 'Enviando...'; }
 
         try {
-            // Use fetch with 'no-cors' for simple form submission via Apps Script
+            // Usa o fetch com 'no-cors' para envio simples de formulários via Apps Script
             const response = await fetch(SCRIPT_URL, {
                 method: 'POST',
                 mode: 'no-cors', 
-                headers: { 'Content-Type': 'text/plain' }, // Apps Script expects text/plain or no Content-Type on POST, especially with no-cors
                 body: JSON.stringify(dataToSend)
             });
 
-            // Since we use 'no-cors', the actual response cannot be read, but we assume success if there is no network error.
+            // Como usamos 'no-cors', a resposta real não pode ser lida, mas assumimos sucesso se não houver erro de rede.
 
             showMessage("Dados enviados com sucesso! Verifique a planilha.", false);
             
@@ -698,9 +687,8 @@
             goToStep(5);
 
         } catch (error) {
-            console.error('*** ERRO AO ENVIAR DADOS:', error);
-            // Mensagem de erro mais clara
-            showMessage("Erro ao salvar dados. Verifique o console para mais detalhes, confira sua conexão e o Deployment da URL do Apps Script.", true);
+            console.error('Erro ao enviar dados:', error);
+            showMessage("Erro ao salvar dados. Verifique a conexão ou a URL do Apps Script.", true);
             if (btn) { btn.disabled = false; btn.textContent = 'Salvar Dados Finais'; }
             return;
         } finally {
@@ -708,14 +696,14 @@
         }
     }
 
-    // The keepPrefs parameter is optional and false by default, but it is cleaner to load the preferences again
+    // O parâmetro keepPrefs é opcional e false por default, mas é mais limpo carregar as preferências novamente
     async function resetApp() {
-        // Clear only session data
+        // Limpar apenas os dados de sessão
         appData.startTime = null;
         appData.endTime = null;
         appData.durationSeconds = 0;
-        appData.setupDurationSeconds = 0; // Zero setup time
-        appData.isSetupMode = true; // Return to Setup mode
+        appData.setupDurationSeconds = 0; // Zera o setup time
+        appData.isSetupMode = true; // Volta para o modo Setup
         appData.quantity = 0;
         appData.observation = '';
         appData.setupTime = 0;
@@ -725,7 +713,7 @@
         appData.cp = '';
         appData.currentStep = 1;
 
-        // Clear UI inputs
+        // Limpar inputs da UI
         if (!appData.prefSaveOperador) document.getElementById('operador').value = '';
         if (!appData.prefSaveMaquina) document.getElementById('maquina').value = '';
         document.getElementById('op').value = '';
@@ -737,22 +725,22 @@
         if (timerInterval) clearInterval(timerInterval);
         if (saveStateInterval) clearInterval(saveStateInterval); 
 
-        await clearCurrentState(); // Clear the state saved in IndexedDB/localStorage
+        await clearCurrentState(); // Limpa o estado salvo no IndexedDB/localStorage
         
-        // Reload preferences to fill fields if "Remember" is active
+        // Recarrega as preferências para preencher campos se o "Lembrar" estiver ativo
         loadPreferences(); 
         
         goToStep(1);
     }
     
-    // Function to load preferences and fill fields
+    // Função para carregar preferências e preencher campos
     function loadPreferences() {
         const operadorInput = document.getElementById('operador');
         const maquinaSelect = document.getElementById('maquina');
         const saveOperadorCheckbox = document.getElementById('saveOperador');
         const saveMaquinaCheckbox = document.getElementById('saveMaquina');
 
-        // Operator Preference
+        // Preferência Operador
         const prefOperador = localStorage.getItem('prefSaveOperador');
         if (prefOperador === 'true') {
             const savedOperador = localStorage.getItem('savedOperador');
@@ -767,7 +755,7 @@
             appData.prefSaveOperador = false;
         }
 
-        // Machine Preference
+        // Preferência Máquina
         const prefMaquina = localStorage.getItem('prefSaveMaquina');
         if (prefMaquina === 'true') {
             const savedMaquina = localStorage.getItem('savedMaquina');
@@ -785,17 +773,17 @@
 
 
     document.addEventListener('DOMContentLoaded', async () => {
-        // 1. Load saving preferences
+        // 1. Carrega as preferências de salvamento
         loadPreferences();
         
-        // 2. Try to restore the session
+        // 2. Tenta restaurar a sessão
         const savedState = await getCurrentState();
         
         if (savedState && savedState.startTime && savedState.currentStep >= 3) {
-            // If there is valid state, show the restoration banner
+            // Se houver estado válido, mostra o banner de restauração
             document.getElementById('restore-banner').classList.remove('hidden');
         } else {
-            // If there is no state, start at step 1
+            // Se não houver estado, inicia no passo 1
             goToStep(1);
         }
     });
