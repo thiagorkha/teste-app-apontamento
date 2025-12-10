@@ -264,7 +264,7 @@
                 </div>
                 <!-- Exibição do Tempo de Setup (NOVO) -->
                 <div class="flex justify-between">
-                    <strong class="text-gray-500">Duração Setup:</strong><span id="summary-setup-time" class="font-semibold text-primary">00:00:00</span>
+                    <strong class="text-gray-500">Duração Setup:</strong><span id="summary-setup-time" class="font-semibold text-primary">0 min</span>
                 </div>
                 <div class="flex justify-between">
                     <strong class="text-gray-500">Operador:</strong><span id="summary-operador" class="font-medium">N/A</span>
@@ -333,7 +333,8 @@
     let timerInterval = null;
     let saveStateInterval = null; // Auto-save interval
     const TIMER_DISPLAY = document.getElementById('timer-display');
-    // REMEMBER TO UPDATE THIS URL WITH YOUR GOOGLE APPS SCRIPT DEPLOYMENT URL (ending in /exec)
+    
+    // !!! IMPORTANTE !!! SUBSTITUA ESTA URL PELO SEU ENDEREÇO DO GOOGLE APPS SCRIPT (com o final /exec)
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxQXPruL9fpi7bsbLcOmZsaqanwMgWbWzqnp64v_kmj7xI3FJznelkHuVK3w1ZjWr8M/exec'; 
 
     function formatDateTime(date) {
@@ -350,8 +351,14 @@
         return `${h}:${m}:${s}`;
     }
 
-    function formatDurationToHHMMSS(seconds) {
-        return formatDuration(seconds); // The format is already HH:MM:SS
+    /**
+     * @description Converte segundos em minutos, arredondando para o número inteiro mais próximo.
+     * @param {number} seconds - Duração em segundos.
+     * @returns {string} Duração em minutos seguida de ' min'.
+     */
+    function formatToMinutes(seconds) {
+        const minutes = Math.round(seconds / 60);
+        return `${minutes} min`;
     }
 
     function showMessage(text, isError = false) {
@@ -420,8 +427,8 @@
             if (appData.currentStep === 4) {
                  // Update the summary in screen 4 with restored data
                 document.getElementById('summary-duration').textContent = formatDuration(appData.durationSeconds);
-                // Display setup time in HH:MM:SS format
-                document.getElementById('summary-setup-time').textContent = formatDurationToHHMMSS(appData.setupDurationSeconds);
+                // Display setup time in minutes
+                document.getElementById('summary-setup-time').textContent = formatToMinutes(appData.setupDurationSeconds);
                 document.getElementById('summary-operador').textContent = appData.operador;
                 document.getElementById('summary-op-cp').textContent = `${appData.op} / ${appData.cp}`;
                 document.getElementById('summary-start-end-time').textContent = `${formatDateTime(appData.startTime)} - ${formatDateTime(appData.endTime)}`;
@@ -578,7 +585,7 @@
             return;
         }
 
-        // 1. Store the total setup time
+        // 1. Store the total setup time (in seconds)
         appData.setupDurationSeconds = elapsedSetup;
         
         // 2. Restart the timer for Production
@@ -591,7 +598,7 @@
         updateTimer();
         await saveState(); 
         
-        showMessage(`Setup finalizado (${formatDurationToHHMMSS(elapsedSetup)}). Produção iniciada!`, false);
+        showMessage(`Setup finalizado (${formatToMinutes(elapsedSetup)}). Produção iniciada!`, false);
     }
 
     function updateTimer() {
@@ -621,12 +628,13 @@
 
         // Update the summary for Step 4
         document.getElementById('summary-duration').textContent = formatDuration(appData.durationSeconds);
-        // Display setup time in HH:MM:SS format
-        document.getElementById('summary-setup-time').textContent = formatDurationToHHMMSS(appData.setupDurationSeconds); 
+        // Display setup time in minutes (round to nearest integer)
+        document.getElementById('summary-setup-time').textContent = formatToMinutes(appData.setupDurationSeconds); 
         document.getElementById('summary-operador').textContent = appData.operador;
         document.getElementById('summary-op-cp').textContent = `${appData.op} / ${appData.cp}`;
         document.getElementById('summary-start-end-time').textContent = `${formatDateTime(appData.startTime)} - ${formatDateTime(appData.endTime)}`;
 
+        // appData.setupTime já armazena o valor em segundos
         appData.setupTime = appData.setupDurationSeconds; 
 
         goToStep(4);
@@ -645,15 +653,15 @@
         appData.quantity = parseInt(quantidade);
         appData.observation = observacao;
         
-        // START: CORRECTED ERROR VALIDATION
-        if (!SCRIPT_URL || !SCRIPT_URL.startsWith('https://')) {
-            showMessage("ERRO: Por favor, configure a URL do Google Apps Script (variável SCRIPT_URL) para o URL 'exec' do seu deployment e certifique-se que começa com 'https://'.", true);
+        // CORREÇÃO: Validação de Erro do SCRIPT_URL
+        if (!SCRIPT_URL || !SCRIPT_URL.startsWith('https://') || SCRIPT_URL.includes('COLE_SUA_URL_AQUI')) {
+            showMessage("ERRO: Por favor, configure a URL do Google Apps Script (variável SCRIPT_URL) corretamente no código e certifique-se que começa com 'https://'.", true);
             return;
         }
-        // END: CORRECTED ERROR VALIDATION
+        // FIM: Validação de Erro do SCRIPT_URL
 
-        // NEW: HH:MM:SS format for setup time
-        const setupTimeHHMMSS = formatDurationToHHMMSS(appData.setupTime);
+        // NOVO: Cálculo e formatação do tempo de setup em minutos (arredondado)
+        const setupMinutes = Math.round(appData.setupTime / 60);
 
         const dataToSend = {
             Operador: appData.operador,
@@ -662,11 +670,11 @@
             CP: appData.cp,
             HoraInicio: formatDateTime(appData.startTime),
             HoraFim: formatDateTime(appData.endTime),
-            Duracao: formatDuration(appData.durationSeconds),
+            Duracao: formatDuration(appData.durationSeconds), // Manter HH:MM:SS para Produção
             Quantidade: appData.quantity,
             Observacao: appData.observation,
-            // NEW: Send setup time in HH:MM:SS format
-            SetupHHMMSS: setupTimeHHMMSS, 
+            // NOVO CAMPO: Enviar tempo de setup em minutos (inteiro)
+            SetupMinutos: setupMinutes, 
         };
 
         const btn = saveButton || document.querySelector('button[onclick*="saveFinalData"]');
@@ -677,6 +685,7 @@
             const response = await fetch(SCRIPT_URL, {
                 method: 'POST',
                 mode: 'no-cors', 
+                headers: { 'Content-Type': 'text/plain' }, // Apps Script expects text/plain or no Content-Type on POST, especially with no-cors
                 body: JSON.stringify(dataToSend)
             });
 
@@ -689,8 +698,9 @@
             goToStep(5);
 
         } catch (error) {
-            console.error('Erro ao enviar dados:', error);
-            showMessage("Erro ao salvar dados. Verifique a conexão ou a URL do Apps Script.", true);
+            console.error('*** ERRO AO ENVIAR DADOS:', error);
+            // Mensagem de erro mais clara
+            showMessage("Erro ao salvar dados. Verifique o console para mais detalhes, confira sua conexão e o Deployment da URL do Apps Script.", true);
             if (btn) { btn.disabled = false; btn.textContent = 'Salvar Dados Finais'; }
             return;
         } finally {
