@@ -59,7 +59,7 @@
             border-radius: 0.75rem;
             font-weight: 600;
             transition: background-color 0.2s, transform 0.1s;
-            width: 100%;
+            /* width: 100%; <- Removido para os botões do Passo 2 */
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
         .btn-base:active {
@@ -165,7 +165,7 @@
                 </div>
             </div>
 
-            <button onclick="nextStep(1)" class="btn-base btn-primary">Prosseguir</button>
+            <button onclick="nextStep(1)" class="btn-base btn-primary w-full">Prosseguir</button>
         </div>
 
         <!-- Passo 2: Informações da Ordem de Produção -->
@@ -180,20 +180,35 @@
                 <input type="text" id="cp" class="input-field" placeholder="Ex: PROD-A01" required>
             </div>
             
-            <!-- Botão modificado para iniciar o Setup -->
-            <button onclick="startSetup()" class="btn-base btn-secondary">
-                <div class="flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5 mr-2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2v-2m0 2H8.5m3.5 0h3.5m4.5 9V7.5a1.5 1.5 0 0 0-1.5-1.5H5.25A1.5 1.5 0 0 0 3.75 7.5v11.25a1.5 1.5 0 0 0 1.5 1.5h13.5A1.5 1.5 0 0 0 20.25 18V9" />
-                    </svg>
-                    Iniciar Setup
-                </div>
-            </button>
-            <button onclick="prevStep(2)" class="btn-base btn-primary mt-3 opacity-75 bg-gray-400 hover:bg-gray-500">Voltar</button>
+            <div class="flex space-x-3 mb-3">
+                <!-- NOVO Botão para iniciar o Setup -->
+                <button onclick="startSetup()" class="btn-base btn-secondary flex-1">
+                    <div class="flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5 mr-1">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.061.366.33.682.644.864l1.12.68c.456.276.66.812.52 1.328l-.297.94c-.09.286-.412.443-.64.443-.09 0-.17-.02-.25-.05l-1.11-.64c-.354-.203-.76-.363-1.192-.47l-.282-.07c-.438-.112-.9-.112-1.338 0l-.282.07c-.43.107-.837.267-1.19.47l-1.11.64c-.228.13-.55.286-.64.443l-.297-.94c-.14-.516.064-1.052.52-1.328l1.12-.68c.314-.182.583-.498.644-.864l.213-1.281Z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+                        Iniciar Setup
+                    </div>
+                </button>
+                
+                <!-- Botão para iniciar a Produção diretamente -->
+                <button onclick="startProduction()" class="btn-base btn-primary flex-1">
+                    <div class="flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5 mr-1">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m-4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+                        Iniciar Produção
+                    </div>
+                </button>
+            </div>
+            
+            <button onclick="prevStep(2)" class="btn-base btn-primary mt-3 opacity-75 bg-gray-400 hover:bg-gray-500 w-full">Voltar</button>
         </div>
 
         <!-- Passo 3: Cronômetro de Produção -->
         <div id="step-3" class="step hidden">
+            <!-- Título ajustado dinamicamente -->
             <h2 id="step-3-title" class="text-xl font-semibold mb-6 text-center text-gray-700">...</h2>
             
             <!-- Resumo de informações acima do cronômetro (Design melhorado) -->
@@ -218,7 +233,8 @@
             </div>
             
             <!-- Botões Dinâmicos para Setup e Produção -->
-            <button id="btn-finish-setup" onclick="finishSetup()" class="btn-base btn-secondary">
+            <!-- Botão: Finalizar Setup e Iniciar Produção -->
+            <button id="btn-finish-setup" onclick="finishSetup()" class="btn-base btn-secondary w-full">
                 <div class="flex items-center justify-center">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5 mr-2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -227,7 +243,8 @@
                 </div>
             </button>
             
-            <button id="btn-finish-production" onclick="finishProduction()" class="btn-base btn-primary bg-red-600 hover:bg-red-700 hidden">
+            <!-- Botão: Finalizar e Registrar (Produção) -->
+            <button id="btn-finish-production" onclick="finishProduction()" class="btn-base btn-primary bg-red-600 hover:bg-red-700 w-full hidden">
                 <div class="flex items-center justify-center">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5 mr-2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -272,7 +289,7 @@
                 <textarea id="observacao" class="input-field" rows="3" placeholder="Qualquer problema ou nota relevante."></textarea>
             </div>
 
-            <button onclick="saveFinalData(this)" class="btn-base btn-secondary">Salvar Dados Finais</button>
+            <button onclick="saveFinalData(this)" class="btn-base btn-secondary w-full">Salvar Dados Finais</button>
         </div>
 
         <!-- Passo 5: Confirmação de Salvamento -->
@@ -283,7 +300,7 @@
                 </svg>
                 <h2 class="text-2xl font-bold mb-2 text-gray-800">Concluído!</h2>
                 <p class="text-gray-600 mb-8">O registro foi salvo com sucesso. Seu foco fez a diferença.</p>
-                <button onclick="resetApp()" class="btn-base btn-primary">Iniciar Novo Registro</button>
+                <button onclick="resetApp()" class="btn-base btn-primary w-full">Iniciar Novo Registro</button>
             </div>
         </div>
 
@@ -308,7 +325,7 @@
         setupDurationSeconds: 0, 
         quantity: 0,
         observation: '',
-        setupTime: 0, // Campo setupTime no appData agora armazena a duração em segundos
+        setupTime: 0, // setupTime no appData agora armazena a duração em segundos
         currentStep: 1, // Track current step
         prefSaveOperador: false,
         prefSaveMaquina: false,
@@ -317,7 +334,7 @@
     let timerInterval = null;
     let saveStateInterval = null; // Auto-save interval
     const TIMER_DISPLAY = document.getElementById('timer-display');
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxQXPruL9fpi7bsbLcOmZsaqanwMgWbWzqnp64v_kmJ7xI3FJznelkHuVK3w1ZjWr8M/exec'; // URL do Google Apps Script
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxQXPruL9fpi7bsbLcOmZsaqanwMgWbWzqnp64v_kmj7xI3FJznelkHuVK3w1ZjWr8M/exec'; // URL do Google Apps Script
 
     function formatDateTime(date) {
         if (!date) return 'N/A';
@@ -331,6 +348,10 @@
         const m = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
         const s = String(Math.floor(seconds % 60)).padStart(2, '0');
         return `${h}:${m}:${s}`;
+    }
+
+    function formatDurationToHHMMSS(seconds) {
+        return formatDuration(seconds); // O formato já é HH:MM:SS
     }
 
     function showMessage(text, isError = false) {
@@ -399,8 +420,8 @@
             if (appData.currentStep === 4) {
                  // Atualiza os resumos da tela 4 com os dados restaurados
                 document.getElementById('summary-duration').textContent = formatDuration(appData.durationSeconds);
-                // NOVO: Exibe setup time
-                document.getElementById('summary-setup-time').textContent = formatDuration(appData.setupDurationSeconds);
+                // Exibe setup time no formato HH:MM:SS
+                document.getElementById('summary-setup-time').textContent = formatDurationToHHMMSS(appData.setupDurationSeconds);
                 document.getElementById('summary-operador').textContent = appData.operador;
                 document.getElementById('summary-op-cp').textContent = `${appData.op} / ${appData.cp}`;
                 document.getElementById('summary-start-end-time').textContent = `${formatDateTime(appData.startTime)} - ${formatDateTime(appData.endTime)}`;
@@ -432,11 +453,11 @@
             document.getElementById('info-operador').textContent = appData.operador;
             document.getElementById('info-maquina').textContent = appData.maquina;
             document.getElementById('info-op-cp').textContent = `${appData.op} / ${appData.cp}`;
-            updateStep3UI(); // NOVO: Atualiza título e botões
+            updateStep3UI(); // Atualiza título e botões
         }
     }
 
-    // NOVO: Função para atualizar a UI do Passo 3 com base no modo (Setup/Produção)
+    // Função para atualizar a UI do Passo 3 com base no modo (Setup/Produção)
     function updateStep3UI() {
         const title = document.getElementById('step-3-title');
         const status = document.getElementById('timer-status');
@@ -498,22 +519,20 @@
         if (currentStep === 2) goToStep(1);
     }
 
-    // NOVO: Inicia o cronômetro no modo Setup
-    async function startSetup() {
+    function initializeTimer(modeIsSetup) {
         const op = document.getElementById('op').value.trim();
         const cp = document.getElementById('cp').value.trim();
 
         if (!op || !cp) {
             showMessage("Por favor, preencha a OP e o CP para iniciar.", true);
-            return;
+            return false;
         }
 
         appData.op = op;
         appData.cp = cp;
         appData.startTime = new Date(); // Inicia o cronômetro
         appData.durationSeconds = 0;
-        appData.setupDurationSeconds = 0; // Zera setup anterior
-        appData.isSetupMode = true; // Define o modo Setup
+        appData.isSetupMode = modeIsSetup; // Define o modo
 
         if (timerInterval) clearInterval(timerInterval);
         timerInterval = setInterval(updateTimer, 1000);
@@ -522,11 +541,29 @@
         saveStateInterval = setInterval(saveState, 10000); // Salva a cada 10 segundos
 
         goToStep(3);
-        await saveState(); // Salva imediatamente
-        showMessage(`Setup (OP: ${op}) iniciado`, false);
+        saveState(); // Salva imediatamente
+        return true;
     }
 
-    // NOVO: Finaliza o Setup e reinicia o cronômetro para Produção
+    // Função para iniciar o cronômetro no modo Setup (chamada pelo botão Iniciar Setup)
+    async function startSetup() {
+        if (initializeTimer(true)) {
+            // Zera a duração do setup anterior e define modo Setup
+            appData.setupDurationSeconds = 0; 
+            showMessage(`Setup (OP: ${appData.op}) iniciado`, false);
+        }
+    }
+
+    // Função para iniciar o cronômetro diretamente no modo Produção (chamada pelo botão Iniciar Produção)
+    async function startProduction() {
+        if (initializeTimer(false)) {
+            // Zera setup duration e define modo Produção
+            appData.setupDurationSeconds = 0; 
+            showMessage(`Produção (OP: ${appData.op}) iniciada diretamente`, false);
+        }
+    }
+
+    // Finaliza o Setup e reinicia o cronômetro para Produção
     async function finishSetup() {
         if (!appData.startTime) {
             showMessage("Erro: O setup não foi iniciado corretamente.", true);
@@ -554,7 +591,7 @@
         updateTimer();
         await saveState(); 
         
-        showMessage(`Setup finalizado (${formatDuration(elapsedSetup)}). Produção iniciada!`, false);
+        showMessage(`Setup finalizado (${formatDurationToHHMMSS(elapsedSetup)}). Produção iniciada!`, false);
     }
 
     function updateTimer() {
@@ -568,7 +605,7 @@
 
     async function finishProduction() {
         if (appData.isSetupMode) {
-             showMessage("Finalize o Setup antes de Finalizar a Produção.", true);
+             showMessage("Você precisa Finalizar o Setup antes de Finalizar a Produção.", true);
              return;
         }
         
@@ -579,18 +616,17 @@
 
         if (appData.durationSeconds === 0) {
             showMessage("O tempo de produção precisa ser maior que 0 segundos.", true);
-            // Poderia voltar para o Passo 2 ou recomeçar.
             return;
         }
 
-        // NOVO: Atualiza o resumo do Passo 4
+        // Atualiza o resumo do Passo 4
         document.getElementById('summary-duration').textContent = formatDuration(appData.durationSeconds);
-        document.getElementById('summary-setup-time').textContent = formatDuration(appData.setupDurationSeconds); // NOVO
+        // Exibe tempo de setup no formato HH:MM:SS
+        document.getElementById('summary-setup-time').textContent = formatDurationToHHMMSS(appData.setupDurationSeconds); 
         document.getElementById('summary-operador').textContent = appData.operador;
         document.getElementById('summary-op-cp').textContent = `${appData.op} / ${appData.cp}`;
         document.getElementById('summary-start-end-time').textContent = `${formatDateTime(appData.startTime)} - ${formatDateTime(appData.endTime)}`;
 
-        // NOVO: setupTime no appData agora armazena a duração do setup em segundos
         appData.setupTime = appData.setupDurationSeconds; 
 
         goToStep(4);
@@ -608,15 +644,14 @@
 
         appData.quantity = parseInt(quantidade);
         appData.observation = observacao;
-        // setupTime é obtido automaticamente do cronômetro (appData.setupTime já está em segundos)
-
-        if (SCRIPT_URL.includes('VOU_COLOCAR_AQUI_O_URL') || !SCRIPT_URL.startsWith('https://')) {
+        
+        if (SCRIPT_URL.includes('AKfycbxQXPruL9fpi7bsbLcOmZsaqanwMgWbWzqnp64v_kmj7xI3FJznelkHuVK3w1ZjWr8M') || !SCRIPT_URL.startsWith('https://')) {
             showMessage("ERRO: Por favor, configure a URL do Google Apps Script (variável SCRIPT_URL) para o URL 'exec' do seu deployment.", true);
             return;
         }
 
-        // Converte o tempo de setup de segundos para minutos (arredondado) para envio
-        const setupTimeMinutes = Math.round(appData.setupTime / 60);
+        // NOVO: Formato HH:MM:SS para o tempo de setup
+        const setupTimeHHMMSS = formatDurationToHHMMSS(appData.setupTime);
 
         const dataToSend = {
             Operador: appData.operador,
@@ -628,8 +663,8 @@
             Duracao: formatDuration(appData.durationSeconds),
             Quantidade: appData.quantity,
             Observacao: appData.observation,
-            // NOVO: Envia o tempo de setup calculado (em minutos)
-            SetupMinutos: setupTimeMinutes, 
+            // NOVO: Envia o tempo de setup no formato HH:MM:SS
+            SetupHHMMSS: setupTimeHHMMSS, 
         };
 
         const btn = saveButton || document.querySelector('button[onclick*="saveFinalData"]');
@@ -685,7 +720,6 @@
         document.getElementById('cp').value = '';
         document.getElementById('quantidade').value = '';
         document.getElementById('observacao').value = '';
-        // document.getElementById('setupTime').value = ''; // Campo removido
         TIMER_DISPLAY.textContent = '00:00:00';
 
         if (timerInterval) clearInterval(timerInterval);
