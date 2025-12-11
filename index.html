@@ -34,659 +34,742 @@
             background-color: var(--card);
             padding: 2rem;
             border-radius: 1.25rem; /* Mais arredondado */
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05); /* Sombra mais profunda */
+            border: 1px solid var(--border-color); /* Borda sutil */
             width: 100%;
             max-width: 420px;
+        }
+        .input-field {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem; /* Mais arredondado */
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+            margin-top: 0.5rem;
+            background-color: #f9fafb; /* Fundo levemente cinza */
+        }
+        .input-field:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.2);
+            background-color: var(--card);
+        }
+        .btn-base {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: background-color 0.2s, transform 0.1s;
+            /* width: 100%; <- Removido para os botões do Passo 2 */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .btn-base:active {
+            transform: translateY(1px);
         }
         .btn-primary {
             background-color: var(--primary);
             color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.75rem;
-            font-weight: 600;
-            transition: background-color 0.2s;
         }
         .btn-primary:hover {
-            background-color: #1e40af;
+            background-color: #1E40AF;
         }
-        .step {
-            display: none;
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: white;
         }
-        .step.active {
-            display: block;
+        .btn-secondary:hover {
+            background-color: #047857;
         }
-        /* Estilos para o banner de restauração e de instalação */
-        #restore-banner, #install-banner {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 50;
+        .summary-info-block {
+            background-color: #f3f4f6; /* Fundo cinza suave */
+            padding: 1rem;
+            border-radius: 0.75rem;
+            border-left: 4px solid var(--primary);
         }
-        .hidden {
-            display: none !important;
+        .timer-display-area {
+            background-color: var(--text-color); /* Fundo escuro para contraste */
+            color: #10B981; /* Verde neon para o timer */
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            font-size: 2.5rem; /* Maior */
+            letter-spacing: 2px;
+            font-family: monospace;
+        }
+        /* Style for restore banner */
+        .restore-banner {
+            background-color: #fffbeb;
+            border: 2px solid #f59e0b;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            margin-bottom: 1.5rem;
         }
     </style>
 </head>
-<body class="p-0 m-0">
+<body>
 
-    <!-- Banner de Instalação PWA - Adicionado para dar controle ao usuário -->
-    <div id="install-banner" class="hidden bg-gray-900 text-white p-3 shadow-xl">
-        <div class="max-w-4xl mx-auto flex justify-between items-center">
-            <span class="text-sm font-medium">Instale o "Apontamento de Produção" como um aplicativo.</span>
-            <button id="install-button" class="bg-secondary text-white text-sm font-semibold px-3 py-1 rounded-lg hover:bg-green-700 transition duration-150">
-                Instalar App
+<div class="container-app">
+    <div class="card">
+        <h1 id="app-title" class="text-3xl font-extrabold mb-8 text-center text-gray-900 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-7 h-7 mr-2 text-primary">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
+            Registro de Produção
+        </h1>
+
+        <!-- Banner de Restauração -->
+        <div id="restore-banner" class="restore-banner hidden">
+            <p class="text-sm font-bold text-amber-800 mb-2 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 mr-1 text-amber-600">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.021 3.375 1.767 3.375h14.468c1.745 0 2.632-1.875 1.767-3.375L13.5 7.5c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+                </svg>
+                Sessão em Andamento
+            </p>
+            <p class="text-xs text-amber-700 mb-4">Continuar a produção anterior ou iniciar um novo registro?</p>
+            <div class="flex gap-3">
+                <button onclick="restoreSession()" class="btn-secondary text-sm py-2">Continuar</button>
+                <button onclick="discardSession()" class="btn-primary text-sm py-2 opacity-80 bg-red-600 hover:bg-red-700">Descartar</button>
+            </div>
+        </div>
+
+        <div id="message-box" class="hidden p-3 mb-4 rounded-xl text-center text-sm font-medium border" role="alert"></div>
+
+        <!-- Passo 1: Informações Básicas -->
+        <div id="step-1" class="step">
+            <h2 class="text-xl font-semibold mb-6 text-center text-gray-700">Identificação</h2>
+            
+            <div class="mb-5">
+                <label for="operador" class="block text-sm font-medium text-gray-700">Nome do Operador</label>
+                <input type="text" id="operador" class="input-field" placeholder="Ex: João Silva" required>
+                <!-- Opção para salvar o nome do operador -->
+                <div class="flex items-center mt-2">
+                    <input id="saveOperador" type="checkbox" class="h-4 w-4 text-primary rounded border-gray-300 focus:ring-primary">
+                    <label for="saveOperador" class="ml-2 block text-sm text-gray-600">Lembrar Operador</label>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <label for="maquina" class="block text-sm font-medium text-gray-700">Máquina / Linha</label>
+                <select id="maquina" class="input-field">
+                    <option value="">Selecione...</option>
+                    <option>Romi D1000</option>
+                    <option>Veker Mvk 1050</option>
+                    <option>Torno Cnc Cosmos</option>
+                    <option>Torno Convencional</option>
+                    <option>Torno Mascote</option>
+                    <option>Fresadora Ferramenteira</option>
+                </select>
+                <!-- Opção para salvar a máquina -->
+                <div class="flex items-center mt-2">
+                    <input id="saveMaquina" type="checkbox" class="h-4 w-4 text-primary rounded border-gray-300 focus:ring-primary">
+                    <label for="saveMaquina" class="ml-2 block text-sm text-gray-600">Lembrar Máquina</label>
+                </div>
+            </div>
+
+            <button onclick="nextStep(1)" class="btn-base btn-primary w-full">Prosseguir</button>
+        </div>
+
+        <!-- Passo 2: Informações da Ordem de Produção -->
+        <div id="step-2" class="step hidden">
+            <h2 class="text-xl font-semibold mb-6 text-center text-gray-700">Detalhes da Produção</h2>
+            <div class="mb-5">
+                <label for="op" class="block text-sm font-medium text-gray-700">Ordem de Produção (OP)</label>
+                <input type="text" id="op" class="input-field" placeholder="Ex: 2024-12345" required>
+            </div>
+            <div class="mb-8">
+                <label for="cp" class="block text-sm font-medium text-gray-700">Código do Produto (CP)</label>
+                <input type="text" id="cp" class="input-field" placeholder="Ex: PROD-A01" required>
+            </div>
+            
+            <div class="flex space-x-3 mb-3">
+                <!-- NOVO Botão para iniciar o Setup -->
+                <button onclick="startSetup()" class="btn-base btn-secondary flex-1">
+                    <div class="flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5 mr-1">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.061.366.33.682.644.864l1.12.68c.456.276.66.812.52 1.328l-.297.94c-.09.286-.412.443-.64.443-.09 0-.17-.02-.25-.05l-1.11-.64c-.354-.203-.76-.363-1.192-.47l-.282-.07c-.438-.112-.9-.112-1.338 0l-.282.07c-.43.107-.837.267-1.19.47l-1.11.64c-.228.13-.55.286-.64.443l-.297-.94c-.14-.516.064-1.052.52-1.328l1.12-.68c.314-.182.583-.498.644-.864l.213-1.281Z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+                        Iniciar Setup
+                    </div>
+                </button>
+                
+                <!-- Botão para iniciar a Produção diretamente -->
+                <button onclick="startProduction()" class="btn-base btn-primary flex-1">
+                    <div class="flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5 mr-1">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m-4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+                        Iniciar Produção
+                    </div>
+                </button>
+            </div>
+            
+            <button onclick="prevStep(2)" class="btn-base btn-primary mt-3 opacity-75 bg-gray-400 hover:bg-gray-500 w-full">Voltar</button>
+        </div>
+
+        <!-- Passo 3: Cronômetro de Produção -->
+        <div id="step-3" class="step hidden">
+            <!-- Título ajustado dinamicamente -->
+            <h2 id="step-3-title" class="text-xl font-semibold mb-6 text-center text-gray-700">...</h2>
+            
+            <!-- Resumo de informações acima do cronômetro (Design melhorado) -->
+            <div id="step-3-summary" class="summary-info-block mb-6 grid grid-cols-2 gap-3 text-sm">
+                <div>
+                    <strong class="text-gray-500 font-medium">Operador</strong>
+                    <span id="info-operador" class="block font-semibold text-gray-800">N/A</span>
+                </div>
+                <div>
+                    <strong class="text-gray-500 font-medium">Máquina</strong>
+                    <span id="info-maquina" class="block font-semibold text-gray-800">N/A</span>
+                </div>
+                <div class="col-span-2">
+                    <strong class="text-gray-500 font-medium">OP / Produto</strong>
+                    <span id="info-op-cp" class="block font-semibold text-gray-800">N/A / N/A</span>
+                </div>
+            </div>
+
+            <div class="text-center mb-8 timer-display-area">
+                <p class="font-bold" id="timer-display">00:00:00</p>
+                <p id="timer-status" class="text-xs text-gray-400 mt-2 tracking-normal">Tempo Decorrido</p>
+            </div>
+            
+            <!-- Botões Dinâmicos para Setup e Produção -->
+            <!-- Botão: Finalizar Setup e Iniciar Produção -->
+            <button id="btn-finish-setup" onclick="finishSetup()" class="btn-base btn-secondary w-full">
+                <div class="flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5 mr-2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                    Finalizar Setup e Iniciar Produção
+                </div>
+            </button>
+            
+            <!-- Botão: Finalizar e Registrar (Produção) -->
+            <button id="btn-finish-production" onclick="finishProduction()" class="btn-base btn-primary bg-red-600 hover:bg-red-700 w-full hidden">
+                <div class="flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5 mr-2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                    Finalizar e Registrar
+                </div>
             </button>
         </div>
-    </div>
 
-    <!-- Banner de Restauração de Sessão -->
-    <div id="restore-banner" class="hidden bg-yellow-500 text-yellow-900 p-3 shadow-md">
-        <div class="max-w-4xl mx-auto flex justify-between items-center">
-            <span class="text-sm font-medium">Sessão de produção anterior detectada.</span>
-            <div>
-                <button id="restore-session-btn" class="bg-yellow-700 text-white text-sm font-semibold px-3 py-1 rounded-lg hover:bg-yellow-800 transition duration-150 mr-2">
-                    Restaurar
-                </button>
-                <button id="discard-session-btn" class="bg-yellow-900 text-white text-sm font-semibold px-3 py-1 rounded-lg hover:bg-yellow-950 transition duration-150">
-                    Descartar
-                </button>
+        <!-- Passo 4: Resumo e Dados Finais -->
+        <div id="step-4" class="step hidden">
+            <h2 class="text-xl font-semibold mb-6 text-center text-gray-700">Dados Finais</h2>
+
+            <div class="space-y-3 p-4 mb-6 border border-gray-200 rounded-lg bg-gray-50 text-sm">
+                <div class="flex justify-between">
+                    <strong class="text-gray-500">Duração Total Produção:</strong><span id="summary-duration" class="font-semibold text-secondary">00:00:00</span>
+                </div>
+                <!-- Exibição do Tempo de Setup (NOVO) -->
+                <div class="flex justify-between">
+                    <strong class="text-gray-500">Duração Setup:</strong><span id="summary-setup-time" class="font-semibold text-primary">00:00:00</span>
+                </div>
+                <div class="flex justify-between">
+                    <strong class="text-gray-500">Operador:</strong><span id="summary-operador" class="font-medium">N/A</span>
+                </div>
+                <div class="flex justify-between">
+                    <strong class="text-gray-500">OP / CP:</strong><span id="summary-op-cp" class="font-medium">N/A / N/A</span>
+                </div>
+                <div class="flex justify-between">
+                    <strong class="text-gray-500">Início / Fim:</strong>
+                    <span id="summary-start-end-time" class="font-medium text-right">N/A</span>
+                </div>
+            </div>
+
+            <div class="mb-5">
+                <label for="quantidade" class="block text-sm font-medium text-gray-700">Quantidade Produzida</label>
+                <input type="number" id="quantidade" class="input-field" placeholder="0" min="0" required>
+            </div>
+            <!-- Campo de Tempo de Setup (minutos) REMOVIDO, pois o cálculo é automático -->
+            
+            <div class="mb-8">
+                <label for="observacao" class="block text-sm font-medium text-gray-700">Observação (Opcional)</label>
+                <textarea id="observacao" class="input-field" rows="3" placeholder="Qualquer problema ou nota relevante."></textarea>
+            </div>
+
+            <button onclick="saveFinalData(this)" class="btn-base btn-secondary w-full">Salvar Dados Finais</button>
+        </div>
+
+        <!-- Passo 5: Confirmação de Salvamento -->
+        <div id="step-5" class="step hidden">
+            <div class="text-center p-6">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-16 h-16 mx-auto text-secondary mb-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                </svg>
+                <h2 class="text-2xl font-bold mb-2 text-gray-800">Concluído!</h2>
+                <p class="text-gray-600 mb-8">O registro foi salvo com sucesso. Seu foco fez a diferença.</p>
+                <button onclick="resetApp()" class="btn-base btn-primary w-full">Iniciar Novo Registro</button>
             </div>
         </div>
+
     </div>
+</div>
 
-    <div class="container-app">
-        <div class="card space-y-6">
-            <h1 class="text-2xl font-bold text-center text-primary">Registro de Produção</h1>
+<!-- Added db.js script -->
+<script src="db.js"></script>
 
-            <!-- Passo 1: Seleção da Máquina -->
-            <div id="step-1" class="step">
-                <h2 class="text-xl font-semibold mb-4">1. Selecione a Máquina</h2>
-                <input type="text" id="machine-name" placeholder="Ex: CNC 01 ou Linha de Montagem" class="w-full p-3 border border-border-color rounded-lg focus:ring-primary focus:border-primary">
-                
-                <div class="mt-4 flex items-center justify-between">
-                    <label for="save-maquina" class="text-sm text-gray-600">Lembrar desta máquina na próxima vez?</label>
-                    <input type="checkbox" id="save-maquina" class="h-5 w-5 text-primary rounded border-gray-300 focus:ring-primary">
-                </div>
-                
-                <button id="start-btn" class="w-full mt-6 btn-primary">
-                    Avançar
-                </button>
-            </div>
-
-            <!-- Passo 2: Confirmação e Início -->
-            <div id="step-2" class="step">
-                <h2 class="text-xl font-semibold mb-4">2. Confirmar Início</h2>
-                <p class="text-lg mb-4">Máquina Selecionada: <span id="confirm-machine-name" class="font-bold text-primary"></span></p>
-                <p class="mb-6 text-sm text-gray-600">Ao clicar em "Iniciar Produção", o cronômetro será iniciado.</p>
-
-                <div class="flex space-x-4">
-                    <button id="back-step-2" class="w-1/3 p-3 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition duration-150">
-                        Voltar
-                    </button>
-                    <button id="confirm-start-btn" class="w-2/3 btn-primary">
-                        Iniciar Produção
-                    </button>
-                </div>
-            </div>
-
-            <!-- Passo 3: Produção em Andamento -->
-            <div id="step-3" class="step">
-                <h2 class="text-xl font-semibold mb-4">3. Produção em Andamento</h2>
-                <p class="text-md mb-2">Máquina: <span id="current-machine-name" class="font-bold text-primary"></span></p>
-                <p class="text-2xl font-extrabold text-center my-6">
-                    Tempo: <span id="timer" class="text-secondary">00:00:00</span>
-                </p>
-
-                <button id="pause-btn" class="w-full mt-4 p-3 bg-orange-500 text-white font-semibold rounded-lg hover:bg-orange-600 transition duration-150">
-                    Pausar
-                </button>
-                <button id="finish-btn" class="w-full mt-4 p-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition duration-150">
-                    Finalizar Produção
-                </button>
-            </div>
-
-            <!-- Passo 4: Pausa -->
-            <div id="step-4" class="step">
-                <h2 class="text-xl font-semibold mb-4">4. Pausa</h2>
-                <p class="text-md mb-2">Máquina: <span id="paused-machine-name" class="font-bold text-primary"></span></p>
-                <p class="text-xl font-semibold text-center my-6 text-gray-700">
-                    Produção Pausada.
-                </p>
-                <p class="mb-4 text-sm text-center text-gray-600">
-                    Tempo total de produção: <span id="paused-timer" class="font-bold text-secondary">00:00:00</span>
-                </p>
-
-                <div class="space-y-4">
-                    <input type="text" id="pause-reason" placeholder="Motivo da Pausa (Opcional)" class="w-full p-3 border border-border-color rounded-lg focus:ring-primary focus:border-primary">
-                    <input type="text" id="pause-duration" placeholder="Duração da Pausa (minutos - Opcional)" class="w-full p-3 border border-border-color rounded-lg focus:ring-primary focus:border-primary">
-                </div>
-                
-                <button id="resume-btn" class="w-full mt-6 btn-primary">
-                    Retomar Produção
-                </button>
-                <button id="cancel-pause-btn" class="w-full mt-3 p-3 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition duration-150">
-                    Voltar para Início
-                </button>
-            </div>
-
-            <!-- Passo 5: Resultado -->
-            <div id="step-5" class="step">
-                <h2 class="text-xl font-semibold mb-4">5. Resumo da Produção</h2>
-                <p class="text-md mb-2">Máquina: <span id="result-machine-name" class="font-bold text-primary"></span></p>
-                <p class="text-lg mb-2">Duração Total: <span id="result-total-time" class="font-bold text-secondary">00:00:00</span></p>
-                <p class="text-lg mb-2">Motivo da Pausa: <span id="result-pause-reason" class="font-semibold text-gray-700 italic">N/A</span></p>
-                <p class="text-lg mb-4">Duração da Pausa: <span id="result-pause-duration" class="font-semibold text-gray-700">0 min</span></p>
-
-                <div class="space-y-4">
-                    <input type="number" id="produced-quantity" placeholder="Quantidade Produzida" class="w-full p-3 border border-border-color rounded-lg focus:ring-primary focus:border-primary">
-                    <textarea id="notes" placeholder="Observações Finais (Opcional)" rows="3" class="w-full p-3 border border-border-color rounded-lg focus:ring-primary focus:border-primary"></textarea>
-                </div>
-
-                <button id="save-and-new-btn" class="w-full mt-6 btn-primary">
-                    Salvar e Iniciar Novo
-                </button>
-            </div>
-
-            <!-- Mensagem de Erro/Aviso (Customizada) -->
-            <div id="message-box" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center p-4">
-                <div class="bg-white p-6 rounded-xl shadow-2xl max-w-sm w-full space-y-4">
-                    <h3 id="message-title" class="text-xl font-bold text-primary">Aviso</h3>
-                    <p id="message-text" class="text-gray-700"></p>
-                    <button id="close-message-box" class="w-full btn-primary">
-                        Entendido
-                    </button>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-<script type="module">
-    // Importa as funções do IndexedDB/Service Worker
-    import { getCurrentState, saveState, clearCurrentState, saveToQueue } from "./db.js";
-
-    // Variáveis Globais
-    let appData = {
-        machineName: '',
+<script>
+    const appData = {
+        operador: '',
+        maquina: '',
+        op: '',
+        cp: '',
         startTime: null,
-        pauseTime: null,
-        currentStep: 1,
-        timerInterval: null,
-        totalProductionTime: 0, // Tempo total em milissegundos
-        pauseReason: '',
-        pauseDurationMinutes: 0,
+        endTime: null,
+        durationSeconds: 0,
+        // NOVO: Adicionado para controlar o modo (Setup ou Produção)
+        isSetupMode: true, 
+        // NOVO: Armazena a duração do setup após finalizado (em segundos)
+        setupDurationSeconds: 0, 
+        quantity: 0,
+        observation: '',
+        setupTime: 0, // setupTime no appData agora armazena a duração em segundos
+        currentStep: 1, // Track current step
+        prefSaveOperador: false,
         prefSaveMaquina: false,
     };
 
-    // Variável para armazenar o evento de instalação (PWA)
-    let deferredInstallPrompt = null;
+    let timerInterval = null;
+    let saveStateInterval = null; // Auto-save interval
+    const TIMER_DISPLAY = document.getElementById('timer-display');
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxQXPruL9fpi7bsbLcOmZsaqanwMgWbWzqnp64v_kmJ7xI3FJznelkHuVK3w1ZjWr8M/exec'; // URL do Google Apps Script
 
-    // Elementos DOM
-    const steps = [1, 2, 3, 4, 5].map(n => document.getElementById(`step-${n}`));
-    const startBtn = document.getElementById('start-btn');
-    const machineNameInput = document.getElementById('machine-name');
-    const confirmMachineNameSpan = document.getElementById('confirm-machine-name');
-    const currentMachineNameSpan = document.getElementById('current-machine-name');
-    const pausedMachineNameSpan = document.getElementById('paused-machine-name');
-    const resultMachineNameSpan = document.getElementById('result-machine-name');
-    const confirmStartBtn = document.getElementById('confirm-start-btn');
-    const backStep2Btn = document.getElementById('back-step-2');
-    const timerSpan = document.getElementById('timer');
-    const pauseBtn = document.getElementById('pause-btn');
-    const finishBtn = document.getElementById('finish-btn');
-    const resumeBtn = document.getElementById('resume-btn');
-    const restoreBanner = document.getElementById('restore-banner');
-    const restoreSessionBtn = document.getElementById('restore-session-btn');
-    const discardSessionBtn = document.getElementById('discard-session-btn');
-    const saveMaquinaCheckbox = document.getElementById('save-maquina');
-    const pausedTimerSpan = document.getElementById('paused-timer');
-    const pauseReasonInput = document.getElementById('pause-reason');
-    const pauseDurationInput = document.getElementById('pause-duration');
-    const cancelPauseBtn = document.getElementById('cancel-pause-btn');
-    const resultTotalTimeSpan = document.getElementById('result-total-time');
-    const resultPauseReasonSpan = document.getElementById('result-pause-reason');
-    const resultPauseDurationSpan = document.getElementById('result-pause-duration');
-    const producedQuantityInput = document.getElementById('produced-quantity');
-    const notesTextarea = document.getElementById('notes');
-    const saveAndNewBtn = document.getElementById('save-and-new-btn');
-    const installBanner = document.getElementById('install-banner');
-    const installButton = document.getElementById('install-button');
-    const messageBox = document.getElementById('message-box');
-    const messageTitle = document.getElementById('message-title');
-    const messageText = document.getElementById('message-text');
-    const closeMessageBox = document.getElementById('close-message-box');
-
-
-    // --- Funções de Utilidade ---
-
-    /**
-     * Exibe a caixa de mensagem customizada.
-     * @param {string} title Título da mensagem.
-     * @param {string} text Texto do corpo da mensagem.
-     */
-    function showMessage(title, text) {
-        messageTitle.textContent = title;
-        messageText.textContent = text;
-        messageBox.classList.remove('hidden');
+    function formatDateTime(date) {
+        if (!date) return 'N/A';
+        const d = new Date(date);
+        return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR');
     }
 
-    /**
-     * Fecha a caixa de mensagem customizada.
-     */
-    function closeMessage() {
-        messageBox.classList.add('hidden');
+    function formatDuration(seconds) {
+        if (seconds < 0) seconds = 0;
+        const h = String(Math.floor(seconds / 3600)).padStart(2, '0');
+        const m = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
+        const s = String(Math.floor(seconds % 60)).padStart(2, '0');
+        return `${h}:${m}:${s}`;
     }
 
-    // Listener para fechar a mensagem
-    closeMessageBox.addEventListener('click', closeMessage);
-
-    /**
-     * Formata um tempo em milissegundos para HH:MM:SS.
-     * @param {number} ms Tempo em milissegundos.
-     * @returns {string} Tempo formatado.
-     */
-    function formatTime(ms) {
-        if (ms < 0) ms = 0;
-        const totalSeconds = Math.floor(ms / 1000);
-        const hours = Math.floor(totalSeconds / 3600);
-        const minutes = Math.floor((totalSeconds % 3600) / 60);
-        const seconds = totalSeconds % 60;
-
-        const pad = (num) => String(num).padStart(2, '0');
-        return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+    function formatDurationToHHMMSS(seconds) {
+        return formatDuration(seconds); // O formato já é HH:MM:SS
     }
 
-    /**
-     * Atualiza o estado da aplicação e salva no IndexedDB.
-     */
-    function updateAndSaveState() {
-        // Recalcula o tempo de produção (apenas se estiver ativo/passo 3)
-        if (appData.currentStep === 3 && appData.startTime) {
-            appData.totalProductionTime = new Date().getTime() - appData.startTime;
-        }
+    function showMessage(text, isError = false) {
+        const box = document.getElementById('message-box');
+        box.textContent = text;
+        box.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'border-red-400', 'bg-green-100', 'text-green-700', 'border-green-400');
+        box.classList.add(isError ? 'bg-red-100' : 'bg-green-100');
+        box.classList.add(isError ? 'text-red-700' : 'text-green-700');
+        box.classList.add(isError ? 'border-red-400' : 'border-green-400');
+        setTimeout(() => box.classList.add('hidden'), 5000);
+    }
 
-        // Garante que o totalProductionTime é sempre armazenado (mesmo se pausado)
-        saveState({
-            machineName: appData.machineName,
-            startTime: appData.startTime,
-            pauseTime: appData.pauseTime,
-            currentStep: appData.currentStep,
-            totalProductionTime: appData.totalProductionTime,
-            pauseReason: appData.pauseReason,
-            pauseDurationMinutes: appData.pauseDurationMinutes,
+    async function saveState() {
+        // Verifica se há tempo de inicio e se o passo é o 3 (Setup ou Produção)
+        if (!appData.startTime || appData.currentStep !== 3) return;
+        
+        const stateToSave = {
+            ...appData,
+            startTime: appData.startTime ? appData.startTime.getTime() : null,
+            endTime: appData.endTime ? appData.endTime.getTime() : null,
+        };
+        
+        // Função do db.js para salvar o estado
+        await saveCurrentState(stateToSave);
+        console.log('[v0] State auto-saved');
+    }
+
+    async function restoreSession() {
+        const state = await getCurrentState();
+        if (!state) return;
+
+        // Atribui as propriedades salvas
+        Object.assign(appData, {
+            ...state,
+            startTime: state.startTime ? new Date(state.startTime) : null,
+            endTime: state.endTime ? new Date(state.endTime) : null,
         });
+
+        // Restaura campos
+        document.getElementById('operador').value = appData.operador;
+        document.getElementById('maquina').value = appData.maquina;
+        document.getElementById('op').value = appData.op;
+        document.getElementById('cp').value = appData.cp;
+        document.getElementById('saveOperador').checked = appData.prefSaveOperador || false;
+        document.getElementById('saveMaquina').checked = appData.prefSaveMaquina || false;
+
+
+        document.getElementById('restore-banner').classList.add('hidden');
+
+        if (appData.currentStep === 3 && appData.startTime) {
+            // Recalcula tempo decorrido
+            const now = new Date();
+            const elapsed = Math.floor((now - appData.startTime) / 1000);
+            appData.durationSeconds = elapsed;
+            
+            goToStep(3);
+            
+            // Reinicia o cronômetro
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(updateTimer, 1000);
+            updateTimer();
+            
+            showMessage('Sessão restaurada! Continuando...', false);
+        } else {
+            // Se o passo for 4, mostra o resumo
+            if (appData.currentStep === 4) {
+                 // Atualiza os resumos da tela 4 com os dados restaurados
+                document.getElementById('summary-duration').textContent = formatDuration(appData.durationSeconds);
+                // Exibe setup time no formato HH:MM:SS
+                document.getElementById('summary-setup-time').textContent = formatDurationToHHMMSS(appData.setupDurationSeconds);
+                document.getElementById('summary-operador').textContent = appData.operador;
+                document.getElementById('summary-op-cp').textContent = `${appData.op} / ${appData.cp}`;
+                document.getElementById('summary-start-end-time').textContent = `${formatDateTime(appData.startTime)} - ${formatDateTime(appData.endTime)}`;
+            }
+            goToStep(appData.currentStep);
+        }
     }
 
-    /**
-     * Transiciona para a etapa (Step) fornecida.
-     * @param {number} stepNumber O número da etapa para onde transicionar.
-     */
+    async function discardSession() {
+        await clearCurrentState();
+        document.getElementById('restore-banner').classList.add('hidden');
+        resetApp(); 
+    }
+
     function goToStep(stepNumber) {
         appData.currentStep = stepNumber;
-        steps.forEach(step => step.classList.remove('active'));
-
-        const newStep = document.getElementById(`step-${stepNumber}`);
-        if (newStep) {
-            newStep.classList.add('active');
-        }
-
-        // Atualiza a interface (máquina e tempo)
-        updateUI();
-        updateAndSaveState();
-    }
-
-    /**
-     * Inicia/Reinicia o cronômetro.
-     */
-    function startTimer() {
-        if (appData.timerInterval) {
-            clearInterval(appData.timerInterval);
-        }
-
-        // Se o startTime for nulo, define ele com base no tempo atual
-        if (!appData.startTime) {
-            appData.startTime = new Date().getTime();
-            appData.totalProductionTime = 0;
-        }
-
-        appData.timerInterval = setInterval(() => {
-            appData.totalProductionTime = new Date().getTime() - appData.startTime;
-            timerSpan.textContent = formatTime(appData.totalProductionTime);
-            // Salva o estado a cada 5 segundos para persistência
-            if (Math.floor(appData.totalProductionTime / 1000) % 5 === 0) {
-                updateAndSaveState();
-            }
-        }, 1000);
-
-        updateAndSaveState();
-    }
-
-    /**
-     * Para o cronômetro (não zera o tempo acumulado).
-     */
-    function stopTimer() {
-        if (appData.timerInterval) {
-            clearInterval(appData.timerInterval);
-            appData.timerInterval = null;
-        }
-        // Garante que o tempo finalizado seja salvo.
-        updateAndSaveState();
-    }
-
-    /**
-     * Atualiza os textos dinâmicos na interface (nome da máquina e tempos).
-     */
-    function updateUI() {
-        const name = appData.machineName || 'N/A';
-        
-        // Atualiza todos os spans de nome de máquina
-        [confirmMachineNameSpan, currentMachineNameSpan, pausedMachineNameSpan, resultMachineNameSpan].forEach(span => {
-            if (span) span.textContent = name;
+        const steps = [1, 2, 3, 4, 5];
+        steps.forEach(step => {
+            const el = document.getElementById(`step-${step}`);
+            if (el) el.classList.add('hidden');
         });
-
-        // Atualiza o timer do passo 3
-        if (appData.currentStep === 3) {
-            timerSpan.textContent = formatTime(appData.totalProductionTime);
-        }
-        // Atualiza o timer do passo 4
-        if (appData.currentStep === 4) {
-             pausedTimerSpan.textContent = formatTime(appData.totalProductionTime);
-        }
-        // Atualiza o resultado do passo 5
-        if (appData.currentStep === 5) {
-            resultTotalTimeSpan.textContent = formatTime(appData.totalProductionTime);
-            resultPauseReasonSpan.textContent = appData.pauseReason || 'Nenhum';
-            resultPauseDurationSpan.textContent = `${appData.pauseDurationMinutes} min`;
+        const targetEl = document.getElementById(`step-${stepNumber}`);
+        if (targetEl) targetEl.classList.remove('hidden');
+        
+        if (stepNumber >= 3) saveState();
+        
+        // Atualizar informações do Passo 3 ao mudar para ele
+        if (stepNumber === 3) {
+            document.getElementById('info-operador').textContent = appData.operador;
+            document.getElementById('info-maquina').textContent = appData.maquina;
+            document.getElementById('info-op-cp').textContent = `${appData.op} / ${appData.cp}`;
+            updateStep3UI(); // Atualiza título e botões
         }
     }
 
-    /**
-     * Carrega as preferências de salvamento do localStorage.
-     */
-    function loadPreferences() {
-        const savedPref = localStorage.getItem('producao-pref-maquina');
-        if (savedPref) {
-            appData.prefSaveMaquina = JSON.parse(savedPref);
-        }
+    // Função para atualizar a UI do Passo 3 com base no modo (Setup/Produção)
+    function updateStep3UI() {
+        const title = document.getElementById('step-3-title');
+        const status = document.getElementById('timer-status');
+        const btnSetup = document.getElementById('btn-finish-setup');
+        const btnProd = document.getElementById('btn-finish-production');
 
-        // Carrega o nome da máquina se a preferência estiver ativa
-        if (appData.prefSaveMaquina) {
-            const savedMachine = localStorage.getItem('producao-machine-name');
-            if (savedMachine) {
-                machineNameInput.value = savedMachine;
-            }
-        }
-        saveMaquinaCheckbox.checked = appData.prefSaveMaquina;
-    }
-
-    /**
-     * Salva as preferências no localStorage.
-     */
-    function savePreferences() {
-        localStorage.setItem('producao-pref-maquina', appData.prefSaveMaquina);
-        if (appData.prefSaveMaquina) {
-            localStorage.setItem('producao-machine-name', appData.machineName);
+        if (appData.isSetupMode) {
+            title.textContent = 'Setup em Curso';
+            status.textContent = 'Tempo de Setup Decorrido';
+            btnSetup.classList.remove('hidden');
+            btnProd.classList.add('hidden');
         } else {
-            localStorage.removeItem('producao-machine-name');
+            title.textContent = 'Produção em Curso';
+            status.textContent = 'Tempo de Produção Decorrido';
+            btnSetup.classList.add('hidden');
+            btnProd.classList.remove('hidden');
         }
     }
 
+    function nextStep(currentStep) {
+        if (currentStep === 1) {
+            const operador = document.getElementById('operador').value.trim();
+            const maquina = document.getElementById('maquina').value.trim();
+            const saveOperador = document.getElementById('saveOperador').checked;
+            const saveMaquina = document.getElementById('saveMaquina').checked;
 
-    // --- Listeners de Eventos ---
+            if (!operador || !maquina) {
+                showMessage("Por favor, preencha o Nome do Operador e a Máquina.", true);
+                return;
+            }
 
-    // Passo 1: Iniciar
-    startBtn.addEventListener('click', () => {
-        const name = machineNameInput.value.trim();
-        if (!name) {
-            showMessage("Erro", "Por favor, insira o nome da máquina.");
-            return;
+            appData.operador = operador;
+            appData.maquina = maquina;
+            appData.prefSaveOperador = saveOperador;
+            appData.prefSaveMaquina = saveMaquina;
+            
+            // Lógica de Salvar Preferências no localStorage
+            if (saveOperador) {
+                localStorage.setItem('savedOperador', operador);
+            } else {
+                localStorage.removeItem('savedOperador');
+            }
+            localStorage.setItem('prefSaveOperador', saveOperador ? 'true' : 'false');
+
+            if (saveMaquina) {
+                localStorage.setItem('savedMaquina', maquina);
+            } else {
+                localStorage.removeItem('savedMaquina');
+            }
+            localStorage.setItem('prefSaveMaquina', saveMaquina ? 'true' : 'false');
+            
+            goToStep(2);
+        } else {
+            goToStep(currentStep + 1);
         }
-        appData.machineName = name;
-        appData.prefSaveMaquina = saveMaquinaCheckbox.checked;
-        savePreferences();
-        goToStep(2);
-    });
+    }
 
-    // Passo 2: Voltar
-    backStep2Btn.addEventListener('click', () => {
-        goToStep(1);
-    });
+    function prevStep(currentStep) {
+        if (currentStep === 2) goToStep(1);
+    }
 
-    // Passo 2: Confirmar Início
-    confirmStartBtn.addEventListener('click', () => {
-        // Limpa estado se houver algum
-        clearCurrentState();
-        
-        appData.startTime = new Date().getTime();
-        appData.totalProductionTime = 0;
-        appData.pauseTime = null; // Garante que a pausa está limpa
-        appData.pauseReason = ''; // Garante que o motivo da pausa está limpo
-        appData.pauseDurationMinutes = 0; // Garante que a duração da pausa está limpa
+    function initializeTimer(modeIsSetup) {
+        const op = document.getElementById('op').value.trim();
+        const cp = document.getElementById('cp').value.trim();
+
+        if (!op || !cp) {
+            showMessage("Por favor, preencha a OP e o CP para iniciar.", true);
+            return false;
+        }
+
+        appData.op = op;
+        appData.cp = cp;
+        appData.startTime = new Date(); // Inicia o cronômetro
+        appData.durationSeconds = 0;
+        appData.isSetupMode = modeIsSetup; // Define o modo
+
+        if (timerInterval) clearInterval(timerInterval);
+        timerInterval = setInterval(updateTimer, 1000);
+
+        if (saveStateInterval) clearInterval(saveStateInterval);
+        saveStateInterval = setInterval(saveState, 10000); // Salva a cada 10 segundos
 
         goToStep(3);
-        startTimer();
-    });
+        saveState(); // Salva imediatamente
+        return true;
+    }
 
-    // Passo 3: Pausar
-    pauseBtn.addEventListener('click', () => {
-        stopTimer();
-        appData.pauseTime = new Date().getTime();
-        pauseReasonInput.value = ''; // Limpa campos ao entrar na pausa
-        pauseDurationInput.value = '';
+    // Função para iniciar o cronômetro no modo Setup (chamada pelo botão Iniciar Setup)
+    async function startSetup() {
+        if (initializeTimer(true)) {
+            // Zera a duração do setup anterior e define modo Setup
+            appData.setupDurationSeconds = 0; 
+            showMessage(`Setup (OP: ${appData.op}) iniciado`, false);
+        }
+    }
+
+    // Função para iniciar o cronômetro diretamente no modo Produção (chamada pelo botão Iniciar Produção)
+    async function startProduction() {
+        if (initializeTimer(false)) {
+            // Zera setup duration e define modo Produção
+            appData.setupDurationSeconds = 0; 
+            showMessage(`Produção (OP: ${appData.op}) iniciada diretamente`, false);
+        }
+    }
+
+    // Finaliza o Setup e reinicia o cronômetro para Produção
+    async function finishSetup() {
+        if (!appData.startTime) {
+            showMessage("Erro: O setup não foi iniciado corretamente.", true);
+            return;
+        }
+
+        const now = new Date();
+        const elapsedSetup = Math.floor((now - appData.startTime) / 1000);
+        
+        if (elapsedSetup < 1) {
+            showMessage("O tempo de Setup precisa ser maior que 0 segundos.", true);
+            return;
+        }
+
+        // 1. Armazena o tempo de setup total
+        appData.setupDurationSeconds = elapsedSetup;
+        
+        // 2. Reinicia o cronômetro para a Produção
+        appData.startTime = new Date(); 
+        appData.durationSeconds = 0; // Zera o contador de duração para Produção
+        appData.isSetupMode = false; // Muda para o modo Produção
+        
+        // 3. Atualiza UI e salva o estado
+        updateStep3UI(); 
+        updateTimer();
+        await saveState(); 
+        
+        showMessage(`Setup finalizado (${formatDurationToHHMMSS(elapsedSetup)}). Produção iniciada!`, false);
+    }
+
+    function updateTimer() {
+        if (appData.startTime) {
+            const now = new Date();
+            const elapsed = Math.floor((now - appData.startTime) / 1000);
+            appData.durationSeconds = elapsed;
+            TIMER_DISPLAY.textContent = formatDuration(elapsed);
+        }
+    }
+
+    async function finishProduction() {
+        if (appData.isSetupMode) {
+             showMessage("Você precisa Finalizar o Setup antes de Finalizar a Produção.", true);
+             return;
+        }
+        
+        if (timerInterval) clearInterval(timerInterval);
+        if (saveStateInterval) clearInterval(saveStateInterval); 
+        
+        appData.endTime = new Date();
+
+        if (appData.durationSeconds === 0) {
+            showMessage("O tempo de produção precisa ser maior que 0 segundos.", true);
+            return;
+        }
+
+        // Atualiza o resumo do Passo 4
+        document.getElementById('summary-duration').textContent = formatDuration(appData.durationSeconds);
+        // Exibe tempo de setup no formato HH:MM:SS
+        document.getElementById('summary-setup-time').textContent = formatDurationToHHMMSS(appData.setupDurationSeconds); 
+        document.getElementById('summary-operador').textContent = appData.operador;
+        document.getElementById('summary-op-cp').textContent = `${appData.op} / ${appData.cp}`;
+        document.getElementById('summary-start-end-time').textContent = `${formatDateTime(appData.startTime)} - ${formatDateTime(appData.endTime)}`;
+
+        appData.setupTime = appData.setupDurationSeconds; 
+
         goToStep(4);
-    });
+        await saveState(); // Salva o estado final
+    }
 
-    // Passo 3: Finalizar
-    finishBtn.addEventListener('click', () => {
-        stopTimer();
-        // Verifica se há pelo menos 1 segundo de produção
-        if (appData.totalProductionTime < 1000) {
-            showMessage("Erro", "A produção deve ter pelo menos 1 segundo de duração para ser finalizada.");
-            startTimer(); // Reinicia o timer para o usuário continuar
+    async function saveFinalData(saveButton) {
+        const quantidade = document.getElementById('quantidade').value;
+        const observacao = document.getElementById('observacao').value;
+
+        if (quantidade === '' || isNaN(parseInt(quantidade))) {
+            showMessage("Por favor, preencha a Quantidade Produzida.", true);
             return;
         }
 
-        // Prepara os campos de resultado e vai para o passo 5
-        producedQuantityInput.value = '';
-        notesTextarea.value = '';
-        goToStep(5);
-    });
-
-    // Passo 4: Retomar
-    resumeBtn.addEventListener('click', () => {
-        // Calcula a duração da pausa (em minutos)
-        const durationMinutes = parseFloat(pauseDurationInput.value.replace(',', '.')) || 0;
+        appData.quantity = parseInt(quantidade);
+        appData.observation = observacao;
         
-        // Atualiza os dados da pausa
-        appData.pauseReason = pauseReasonInput.value.trim();
-        appData.pauseDurationMinutes += durationMinutes;
-
-        // Ajusta o tempo de início para que o totalProductionTime seja mantido (não descontando o tempo da pausa real)
-        const now = new Date().getTime();
-        const pauseDurationMs = (now - appData.pauseTime); // Duração real da pausa na tela
-        
-        // O novo startTime é o atual menos o tempo que já havia de produção
-        // Isso garante que o cronômetro recomece do ponto onde parou no passo 3
-        appData.startTime = now - appData.totalProductionTime; 
-        appData.pauseTime = null; // Limpa o tempo de pausa
-        
-        goToStep(3);
-        startTimer();
-    });
-
-    // Passo 4: Cancelar Pausa / Voltar para Início
-    cancelPauseBtn.addEventListener('click', () => {
-        stopTimer();
-        // Limpa os dados de produção (similar a um descarte)
-        clearCurrentState();
-        
-        // Resetar appData para o estado inicial
-        appData = {
-            machineName: appData.prefSaveMaquina ? appData.machineName : '', // Mantém o nome da máquina se for preferência
-            startTime: null,
-            pauseTime: null,
-            currentStep: 1,
-            timerInterval: null,
-            totalProductionTime: 0,
-            pauseReason: '',
-            pauseDurationMinutes: 0,
-            prefSaveMaquina: appData.prefSaveMaquina,
-        };
-        // Garante que a checkbox reflita o estado
-        saveMaquinaCheckbox.checked = appData.prefSaveMaquina;
-        
-        // Vai para o passo 1
-        goToStep(1);
-    });
-
-    // Passo 5: Salvar e Novo
-    saveAndNewBtn.addEventListener('click', async () => {
-        const quantity = parseInt(producedQuantityInput.value, 10);
-
-        if (isNaN(quantity) || quantity < 0) {
-            showMessage("Erro", "Por favor, insira uma Quantidade Produzida válida (número não negativo).");
+        if (SCRIPT_URL.includes('AKfycbxQXPruL9fpi7bsbLcOmZsaqanwMgWbWzqnp64v_kmj7xI3FJznelkHuVK3w1ZjWr8M') || !SCRIPT_URL.startsWith('https://')) {
+            showMessage("ERRO: Por favor, configure a URL do Google Apps Script (variável SCRIPT_URL) para o URL 'exec' do seu deployment.", true);
             return;
         }
 
-        const data = {
-            machineName: appData.machineName,
-            productionTimeMs: appData.totalProductionTime,
-            productionTimeFormatted: formatTime(appData.totalProductionTime),
-            pauseReason: appData.pauseReason,
-            pauseDurationMinutes: appData.pauseDurationMinutes,
-            producedQuantity: quantity,
-            notes: notesTextarea.value.trim(),
-            timestamp: new Date().toISOString(),
+        // NOVO: Formato HH:MM:SS para o tempo de setup
+        const setupTimeHHMMSS = formatDurationToHHMMSS(appData.setupTime);
+
+        const dataToSend = {
+            Operador: appData.operador,
+            Maquina: appData.maquina,
+            OP: appData.op,
+            CP: appData.cp,
+            HoraInicio: formatDateTime(appData.startTime),
+            HoraFim: formatDateTime(appData.endTime),
+            Duracao: formatDuration(appData.durationSeconds),
+            Quantidade: appData.quantity,
+            Observacao: appData.observation,
+            // NOVO: Envia o tempo de setup no formato HH:MM:SS
+            SetupMinutos: setupTimeHHMMSS, 
         };
+
+        const btn = saveButton || document.querySelector('button[onclick*="saveFinalData"]');
+        if (btn) { btn.disabled = true; btn.textContent = 'Enviando...'; }
 
         try {
-            await saveToQueue(data);
-            await clearCurrentState();
-            showMessage("Sucesso!", "Dados de produção salvos e prontos para sincronização.");
-        } catch (error) {
-            console.error("Erro ao salvar dados de produção:", error);
-            showMessage("Erro", "Falha ao salvar os dados localmente. Verifique o console para detalhes.");
-        }
-
-        // Resetar appData (mantendo o nome da máquina se for preferência)
-        appData = {
-            machineName: appData.prefSaveMaquina ? appData.machineName : '',
-            startTime: null,
-            pauseTime: null,
-            currentStep: 1,
-            timerInterval: null,
-            totalProductionTime: 0,
-            pauseReason: '',
-            pauseDurationMinutes: 0,
-            prefSaveMaquina: appData.prefSaveMaquina,
-        };
-        // Garante que a checkbox reflita o estado
-        saveMaquinaCheckbox.checked = appData.prefSaveMaquina;
-        machineNameInput.value = appData.machineName;
-
-        // Vai para o passo 1
-        goToStep(1);
-    });
-
-    // Restauração de Sessão
-    restoreSessionBtn.addEventListener('click', async () => {
-        const savedState = await getCurrentState();
-        if (savedState) {
-            // Recarrega o estado nos dados da aplicação
-            appData.machineName = savedState.machineName;
-            appData.startTime = savedState.startTime;
-            appData.pauseTime = savedState.pauseTime;
-            appData.totalProductionTime = savedState.totalProductionTime || 0;
-            appData.pauseReason = savedState.pauseReason || '';
-            appData.pauseDurationMinutes = savedState.pauseDurationMinutes || 0;
-
-            // Decide para qual passo ir (3 se estiver em execução, 4 se estiver pausado)
-            const targetStep = (savedState.currentStep === 3 || savedState.currentStep === 4) 
-                ? savedState.currentStep 
-                : 3; // Padrão para 3 se o estado for inconsistente (ex: 5)
-            
-            restoreBanner.classList.add('hidden');
-            goToStep(targetStep);
-            
-            if (targetStep === 3) {
-                // Se for para o passo 3, reinicia o cronômetro
-                startTimer();
-            } else if (targetStep === 4) {
-                 // Se for para o passo 4, apenas garante que a UI esteja atualizada (o cronômetro já está parado)
-                 stopTimer();
-                 // Atualiza os campos de pausa com os dados salvos
-                 pauseReasonInput.value = appData.pauseReason;
-                 pauseDurationInput.value = appData.pauseDurationMinutes;
-                 updateUI();
-            }
-            console.log('[v0] Sessão restaurada para o passo:', targetStep);
-        }
-    });
-
-    // Descarte de Sessão
-    discardSessionBtn.addEventListener('click', async () => {
-        await clearCurrentState();
-        restoreBanner.classList.add('hidden');
-        // Resetar appData (mantendo o nome da máquina se for preferência)
-        appData = {
-            machineName: appData.prefSaveMaquina ? appData.machineName : '',
-            startTime: null,
-            pauseTime: null,
-            currentStep: 1,
-            timerInterval: null,
-            totalProductionTime: 0,
-            pauseReason: '',
-            pauseDurationMinutes: 0,
-            prefSaveMaquina: appData.prefSaveMaquina,
-        };
-        // Garante que a checkbox reflita o estado
-        saveMaquinaCheckbox.checked = appData.prefSaveMaquina;
-        machineNameInput.value = appData.machineName;
-
-        goToStep(1);
-        showMessage("Descarte", "A sessão de produção anterior foi descartada.");
-        console.log('[v0] Sessão anterior descartada');
-    });
-
-    // Toggle de Preferência de Salvar Máquina
-    saveMaquinaCheckbox.addEventListener('change', () => {
-        appData.prefSaveMaquina = saveMaquinaCheckbox.checked;
-        savePreferences();
-    });
-
-    // --- Lógica PWA de Instalação (Adicionado para resolver o problema) ---
-    window.addEventListener('beforeinstallprompt', (event) => {
-        // Previne o prompt padrão do navegador
-        event.preventDefault();
-        // Armazena o evento para ser disparado depois
-        deferredInstallPrompt = event;
-        // Mostra o banner customizado de instalação
-        installBanner.classList.remove('hidden');
-        console.log('[v0] Evento beforeinstallprompt capturado. Banner de instalação exibido.');
-    });
-
-    installButton.addEventListener('click', () => {
-        if (deferredInstallPrompt) {
-            // Oculta o banner customizado (será exibido novamente se a instalação falhar/cancelar)
-            installBanner.classList.add('hidden');
-            // Dispara o prompt nativo de instalação
-            deferredInstallPrompt.prompt();
-
-            // Espera pela escolha do usuário
-            deferredInstallPrompt.userChoice.then((choiceResult) => {
-                if (choiceResult.outcome === 'accepted') {
-                    console.log('[v0] Usuário aceitou a instalação do PWA.');
-                    showMessage("Instalação", "O aplicativo foi instalado com sucesso!");
-                } else {
-                    console.log('[v0] Usuário recusou a instalação do PWA.');
-                    installBanner.classList.remove('hidden'); // Mostra o banner novamente
-                }
-                deferredInstallPrompt = null; // O evento só pode ser usado uma vez
+            // Usa o fetch com 'no-cors' para envio simples de formulários via Apps Script
+            const response = await fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors', 
+                body: JSON.stringify(dataToSend)
             });
+
+            // Como usamos 'no-cors', a resposta real não pode ser lida, mas assumimos sucesso se não houver erro de rede.
+
+            showMessage("Dados enviados com sucesso! Verifique a planilha.", false);
+            
+            await clearCurrentState();
+            
+            goToStep(5);
+
+        } catch (error) {
+            console.error('Erro ao enviar dados:', error);
+            showMessage("Erro ao salvar dados. Verifique a conexão ou a URL do Apps Script.", true);
+            if (btn) { btn.disabled = false; btn.textContent = 'Salvar Dados Finais'; }
+            return;
+        } finally {
+            if (btn) { btn.disabled = false; btn.textContent = 'Salvar Dados Finais'; }
         }
-    });
-    // --- Fim da Lógica PWA de Instalação ---
+    }
+
+    // O parâmetro keepPrefs é opcional e false por default, mas é mais limpo carregar as preferências novamente
+    async function resetApp() {
+        // Limpar apenas os dados de sessão
+        appData.startTime = null;
+        appData.endTime = null;
+        appData.durationSeconds = 0;
+        appData.setupDurationSeconds = 0; // Zera o setup time
+        appData.isSetupMode = true; // Volta para o modo Setup
+        appData.quantity = 0;
+        appData.observation = '';
+        appData.setupTime = 0;
+        if (!appData.prefSaveOperador) appData.operador = '';
+        if (!appData.prefSaveMaquina) appData.maquina = '';
+        appData.op = '';
+        appData.cp = '';
+        appData.currentStep = 1;
+
+        // Limpar inputs da UI
+        if (!appData.prefSaveOperador) document.getElementById('operador').value = '';
+        if (!appData.prefSaveMaquina) document.getElementById('maquina').value = '';
+        document.getElementById('op').value = '';
+        document.getElementById('cp').value = '';
+        document.getElementById('quantidade').value = '';
+        document.getElementById('observacao').value = '';
+        TIMER_DISPLAY.textContent = '00:00:00';
+
+        if (timerInterval) clearInterval(timerInterval);
+        if (saveStateInterval) clearInterval(saveStateInterval); 
+
+        await clearCurrentState(); // Limpa o estado salvo no IndexedDB/localStorage
+        
+        // Recarrega as preferências para preencher campos se o "Lembrar" estiver ativo
+        loadPreferences(); 
+        
+        goToStep(1);
+    }
+    
+    // Função para carregar preferências e preencher campos
+    function loadPreferences() {
+        const operadorInput = document.getElementById('operador');
+        const maquinaSelect = document.getElementById('maquina');
+        const saveOperadorCheckbox = document.getElementById('saveOperador');
+        const saveMaquinaCheckbox = document.getElementById('saveMaquina');
+
+        // Preferência Operador
+        const prefOperador = localStorage.getItem('prefSaveOperador');
+        if (prefOperador === 'true') {
+            const savedOperador = localStorage.getItem('savedOperador');
+            if (savedOperador) {
+                operadorInput.value = savedOperador;
+                appData.operador = savedOperador;
+            }
+            saveOperadorCheckbox.checked = true;
+            appData.prefSaveOperador = true;
+        } else {
+            saveOperadorCheckbox.checked = false;
+            appData.prefSaveOperador = false;
+        }
+
+        // Preferência Máquina
+        const prefMaquina = localStorage.getItem('prefSaveMaquina');
+        if (prefMaquina === 'true') {
+            const savedMaquina = localStorage.getItem('savedMaquina');
+            if (savedMaquina) {
+                maquinaSelect.value = savedMaquina;
+                appData.maquina = savedMaquina;
+            }
+            saveMaquinaCheckbox.checked = true;
+            appData.prefSaveMaquina = true;
+        } else {
+            saveMaquinaCheckbox.checked = false;
+            appData.prefSaveMaquina = false;
+        }
+    }
 
 
     document.addEventListener('DOMContentLoaded', async () => {
@@ -707,32 +790,29 @@
 
     document.addEventListener('visibilitychange', () => {
         if (document.hidden && appData.startTime) {
-            // Salva o estado ao sair da aplicação (em produção)
-            updateAndSaveState();
-            console.log('[v0] App foi para o background, estado salvo');
+            saveState();
+            console.log('[v0] App went to background, state saved');
         }
     });
 
-    // Eventos de saída do navegador
     window.addEventListener('beforeunload', () => {
         if (appData.startTime) {
-            updateAndSaveState();
+            saveState();
         }
     });
 
     window.addEventListener('pagehide', () => {
         if (appData.startTime) {
-            updateAndSaveState();
+            saveState();
         }
     });
 </script>
 
 <script>
-// Registro do Service Worker
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('service-worker.js')
-    .then(() => console.log("Service Worker registrado com sucesso!"))
-    .catch(err => console.log("Erro ao registrar Service Worker:", err));
+    .then(() => console.log("Service Worker registrado!"))
+    .catch(err => console.log("Erro ao registrar SW:", err));
 }
 </script>
 
